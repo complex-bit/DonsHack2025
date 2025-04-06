@@ -166,6 +166,12 @@ func CoursesIndex(c *gin.Context) {
 		return
 	}
 
+	/*
+		for _, course := range courses {
+			models.CreateCourse(course.Number, course.Name)
+		}
+	*/
+
 	c.HTML(http.StatusOK, "courses/index.tpl", gin.H{
 		"canvas":  canvasToken,
 		"courses": courses,

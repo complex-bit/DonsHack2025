@@ -10,6 +10,7 @@ import (
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// before request
 		session := sessions.Default(c)
 		sessionID := session.Get("userID")
 		if sessionID == nil {
@@ -17,10 +18,13 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		userId := sessionID.(uint)
+		// Check if the user exists
 		user := models.UserFromId(userId)
+		/*
 		if user.ID == 0 {
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
+			*/
 
 		c.Set("userID", user.ID)
 

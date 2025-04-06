@@ -11,7 +11,8 @@ var DB *gorm.DB
 func ConnectDatabase() {
 	dsn := os.Getenv("DB_CONN_STR") 
 	if dsn == "" {
-		dsn = "root:password@tcp(127.0.0.1:3306)/usersdb" 
+		dsn = "root:password@tcp(127.0.0.1:3306)/usersdb?parseTime=true"
+
 	}
 	database, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {

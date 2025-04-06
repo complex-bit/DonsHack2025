@@ -7,8 +7,8 @@ import (
 
 type Courses struct {
 	gorm.Model
-	Title   string `gorm:"size:255"`
-	Content string `gorm:"type:text"`
+	ID     int 	  
+	Name   string `gorm:"type:text"`
 }
 
 func CoursesAll(ctx *gin.Context) *[]Courses {
@@ -23,14 +23,11 @@ func CoursesFind(id uint64) *Courses {
 	return &course
 }
 
-func CreateCourse(title, content string) (*Courses, error) {
+func CreateCourse(ID int, Name string){
 	course := Courses{
-		Title:   title,
-		Content: content,
-	}
-	if err := DB.Create(&course).Error; err != nil {
-		return nil, err
+		ID: ID,
+		Name: Name,
 	}
 
-	return &course, nil
+	DB.Create(course)
 }

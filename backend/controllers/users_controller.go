@@ -32,7 +32,7 @@ func Signup(c *gin.Context) {
 	var data formData
 	c.Bind(&data)
 
-	if !models.CheckUser(data.Email) {
+	if !models.CheckUserAvailability(data.Email) {
 		c.Render(http.StatusBadRequest, render.Data{})
 		return
 	}
@@ -51,18 +51,26 @@ func Signup(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
-	session := sessions.Default(c)
-	var id int = 11
+	var data formData
+	c.Bind(&data)
 
-	//TODO : Look for existing Users in database and get the canvas/ID
-	var uintID uint64 = uint64(id)
-	session.Set("userID", uintID)
-	session.Set("canvas", "abc123")
+	// Match password
+	user := models.UserMatchPassword(data.Email, data.Password)
+	if user.ID == 0 {
+		c.Render(http.StatusUnauthorized, render.Data{})
+		return
+	}
+	// Set the session.
+	session := sessions.Default(c)
+	session.Set("userID", user.ID)
+	session.Set("canvas", user.Canvas)
 	session.Save()
-	c.Redirect(http.StatusFound, "/courses")
+
+	c.Redirect(http.StatusFound, "/canvas")
 }
 
 func Logout(c *gin.Context) {
+	// Delete the session
 	session := sessions.Default(c)
 	session.Clear()
 	session.Save()
