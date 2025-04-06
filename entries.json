@@ -1,0 +1,452 @@
+[
+  {
+    "course_name": "Ethics - 02 (Summer 2024)",
+    "assign_name": "Reading Response 1",
+    "due_date": "2024-07-04T06:59:59Z",
+    "submitted_date": "2024-07-02T23:53:57Z",
+    "is_submitted": true,
+    "date_posted": "2024-06-13T20:03:20Z",
+    "points": 0
+  },
+  {
+    "course_name": "Ethics - 02 (Summer 2024)",
+    "assign_name": "Reading Response 2",
+    "due_date": "2024-07-06T06:59:59Z",
+    "submitted_date": "2024-07-06T04:04:50Z",
+    "is_submitted": true,
+    "date_posted": "2024-06-13T20:03:20Z",
+    "points": 0
+  },
+  {
+    "course_name": "Ethics - 02 (Summer 2024)",
+    "assign_name": "Reading Response 3",
+    "due_date": "2024-07-11T06:59:59Z",
+    "submitted_date": "2024-07-11T00:19:45Z",
+    "is_submitted": true,
+    "date_posted": "2024-06-13T20:03:20Z",
+    "points": 0
+  },
+  {
+    "course_name": "Ethics - 02 (Summer 2024)",
+    "assign_name": "Reading Response 4",
+    "due_date": "2024-07-13T06:59:59Z",
+    "submitted_date": "2024-07-11T04:22:50Z",
+    "is_submitted": true,
+    "date_posted": "2024-06-13T20:03:21Z",
+    "points": 0
+  },
+  {
+    "course_name": "Ethics - 02 (Summer 2024)",
+    "assign_name": "Reading Response 5",
+    "due_date": "2024-07-13T06:59:59Z",
+    "submitted_date": "2024-07-12T21:48:35Z",
+    "is_submitted": true,
+    "date_posted": "2024-06-13T20:03:21Z",
+    "points": 0
+  },
+  {
+    "course_name": "Ethics - 02 (Summer 2024)",
+    "assign_name": "Reading Response 6",
+    "due_date": "2024-07-18T06:59:59Z",
+    "submitted_date": "2024-07-17T06:51:14Z",
+    "is_submitted": true,
+    "date_posted": "2024-06-13T20:03:21Z",
+    "points": 0
+  },
+  {
+    "course_name": "Ethics - 02 (Summer 2024)",
+    "assign_name": "Film Assignment 1",
+    "due_date": "2024-07-20T06:59:59Z",
+    "submitted_date": "2024-07-20T01:55:52Z",
+    "is_submitted": true,
+    "date_posted": "2024-06-13T20:03:19Z",
+    "points": 0
+  },
+  {
+    "course_name": "Ethics - 02 (Summer 2024)",
+    "assign_name": "Reading Response 7",
+    "due_date": "2024-07-25T06:59:59Z",
+    "submitted_date": "2024-07-24T23:26:48Z",
+    "is_submitted": true,
+    "date_posted": "2024-06-13T20:03:22Z",
+    "points": 0
+  },
+  {
+    "course_name": "Ethics - 02 (Summer 2024)",
+    "assign_name": "Film Assignment 2",
+    "due_date": "2024-07-25T06:59:59Z",
+    "submitted_date": "2024-07-25T00:21:10Z",
+    "is_submitted": true,
+    "date_posted": "2024-06-13T20:03:19Z",
+    "points": 0
+  },
+  {
+    "course_name": "Ethics - 02 (Summer 2024)",
+    "assign_name": "Film Assignment 3",
+    "due_date": "2024-08-08T06:59:59Z",
+    "submitted_date": "2024-08-08T04:03:17Z",
+    "is_submitted": true,
+    "date_posted": "2024-06-13T20:03:19Z",
+    "points": 0
+  },
+  {
+    "course_name": "Intro to Anthropology - 01 (Spring 2025)",
+    "assign_name": "Week 1 In-Class Activity due Thurs Jan 23",
+    "due_date": "2025-01-24T07:59:00Z",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-01-21T16:34:45Z",
+    "points": 1
+  },
+  {
+    "course_name": "Real Analysis - 02 (Spring 2025)",
+    "assign_name": "Assignment 1",
+    "due_date": "2025-01-30T07:59:00Z",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-01-21T22:14:24Z",
+    "points": 31
+  },
+  {
+    "course_name": "Intro to Anthropology - 01 (Spring 2025)",
+    "assign_name": "Async Wk 2 Thurs Jan 30 Async Activity: Reading Guide Questions",
+    "due_date": "2025-01-31T07:59:00Z",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-01-21T16:34:47Z",
+    "points": 2
+  },
+  {
+    "course_name": "Automata Theory (Spring 2025)",
+    "assign_name": "Homework 1 Q1",
+    "due_date": "2025-01-31T07:59:00Z",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-01-21T20:46:11Z",
+    "points": 1
+  },
+  {
+    "course_name": "Intro to Anthropology - 01 (Spring 2025)",
+    "assign_name": "Week 2 In-Class Activity Tues Jan 28",
+    "due_date": "2025-01-31T07:59:59Z",
+    "submitted_date": "2025-01-28T19:01:24Z",
+    "is_submitted": true,
+    "date_posted": "2025-01-21T16:34:47Z",
+    "points": 2
+  },
+  {
+    "course_name": "Real Analysis - 02 (Spring 2025)",
+    "assign_name": "Assignment 2",
+    "due_date": "2025-02-06T07:59:00Z",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-01-30T17:46:35Z",
+    "points": 40
+  },
+  {
+    "course_name": "Automata Theory (Spring 2025)",
+    "assign_name": "Homework 2 Q1--5 (Mentor questions)",
+    "due_date": "2025-02-07T07:59:00Z",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-02-01T02:04:17Z",
+    "points": 5
+  },
+  {
+    "course_name": "Intro to Anthropology - 01 (Spring 2025)",
+    "assign_name": "Week 3 Movie Assignment: Movie Guide",
+    "due_date": "2025-02-09T07:59:59Z",
+    "submitted_date": "2025-02-08T23:56:05Z",
+    "is_submitted": true,
+    "date_posted": "2025-01-21T16:34:48Z",
+    "points": 4
+  },
+  {
+    "course_name": "Real Analysis - 02 (Spring 2025)",
+    "assign_name": "Assignment 3",
+    "due_date": "2025-02-13T07:59:00Z",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-02-05T22:29:01Z",
+    "points": 40
+  },
+  {
+    "course_name": "Intro to Anthropology - 01 (Spring 2025)",
+    "assign_name": "Anthropology \u0026 Colonialism In-Class Activity",
+    "due_date": "2025-02-14T07:59:59Z",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-02-13T17:14:24Z",
+    "points": 1
+  },
+  {
+    "course_name": "Intro to Anthropology - 01 (Spring 2025)",
+    "assign_name": "Spring 2025 ANTH 200-01 - Beginning of Semester Assessment",
+    "due_date": "2025-02-19T07:59:59Z",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-01-21T16:35:17Z",
+    "points": 0
+  },
+  {
+    "course_name": "Real Analysis - 02 (Spring 2025)",
+    "assign_name": "Assignment 4",
+    "due_date": "2025-02-22T07:59:00Z",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-02-12T22:33:02Z",
+    "points": 45
+  },
+  {
+    "course_name": "Intro to Anthropology - 01 (Spring 2025)",
+    "assign_name": "Week 5/6 Readings and Guide Questions",
+    "due_date": "2025-02-26T07:59:59Z",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-01-21T16:34:48Z",
+    "points": 2
+  },
+  {
+    "course_name": "Real Analysis - 02 (Spring 2025)",
+    "assign_name": "Study Guide I",
+    "due_date": "2025-02-27T07:59:00Z",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-02-19T22:30:46Z",
+    "points": 10
+  },
+  {
+    "course_name": "Real Analysis - 02 (Spring 2025)",
+    "assign_name": "Assignment 5",
+    "due_date": "2025-03-01T07:59:00Z",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-02-20T03:55:37Z",
+    "points": 25
+  },
+  {
+    "course_name": "Intro to Anthropology - 01 (Spring 2025)",
+    "assign_name": "Week 7 Assignment: Readings and Guide Questions",
+    "due_date": "2025-03-07T07:59:59Z",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-01-21T16:34:49Z",
+    "points": 2
+  },
+  {
+    "course_name": "Real Analysis - 02 (Spring 2025)",
+    "assign_name": "Assignment 6",
+    "due_date": "2025-03-08T07:59:00Z",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-02-28T15:38:36Z",
+    "points": 35
+  },
+  {
+    "course_name": "Automata Theory (Spring 2025)",
+    "assign_name": "Midterm (mentor part)",
+    "due_date": "2025-03-09T07:59:59Z",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-03-07T04:50:20Z",
+    "points": 5
+  },
+  {
+    "course_name": "Real Analysis - 02 (Spring 2025)",
+    "assign_name": "Correction EC I",
+    "due_date": "2025-03-17T06:59:00Z",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-02-28T15:39:22Z",
+    "points": 1
+  },
+  {
+    "course_name": "Real Analysis - 02 (Spring 2025)",
+    "assign_name": "Reflection I",
+    "due_date": "2025-03-17T06:59:00Z",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-02-28T15:38:57Z",
+    "points": 10
+  },
+  {
+    "course_name": "Automata Theory (Spring 2025)",
+    "assign_name": "Midterm self-grading",
+    "due_date": "2025-03-19T06:59:00Z",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-03-08T03:37:06Z",
+    "points": 0
+  },
+  {
+    "course_name": "Intro to Anthropology - 01 (Spring 2025)",
+    "assign_name": "Week 10 Assignment: Movie and Letter",
+    "due_date": "2025-03-26T06:59:59Z",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-01-21T16:34:50Z",
+    "points": 1
+  },
+  {
+    "course_name": "Intro to Anthropology - 01 (Spring 2025)",
+    "assign_name": "Roll Call Attendance",
+    "due_date": "",
+    "submitted_date": "2025-01-21T18:06:57Z",
+    "is_submitted": true,
+    "date_posted": "2025-01-21T16:34:45Z",
+    "points": 15
+  },
+  {
+    "course_name": "Undergraduate Student Organizations 2024-2025",
+    "assign_name": "Benefits and Responsibilities Quiz",
+    "due_date": "",
+    "submitted_date": "2024-08-05T00:10:31Z",
+    "is_submitted": true,
+    "date_posted": "2024-02-01T17:33:19Z",
+    "points": 5
+  },
+  {
+    "course_name": "Automata Theory (Spring 2025)",
+    "assign_name": "Homework 2 Q6",
+    "due_date": "",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-02-01T06:51:19Z",
+    "points": 1
+  },
+  {
+    "course_name": "Automata Theory (Spring 2025)",
+    "assign_name": "Homework 2 Q7",
+    "due_date": "",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-02-01T06:51:33Z",
+    "points": 1
+  },
+  {
+    "course_name": "Automata Theory (Spring 2025)",
+    "assign_name": "Homework 2 Q8",
+    "due_date": "",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-02-01T06:51:47Z",
+    "points": 1
+  },
+  {
+    "course_name": "Automata Theory (Spring 2025)",
+    "assign_name": "Homework 2 Q9 (bonus)",
+    "due_date": "",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-02-01T06:52:03Z",
+    "points": 1
+  },
+  {
+    "course_name": "Automata Theory (Spring 2025)",
+    "assign_name": "Homework 1 Q2",
+    "due_date": "",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-01-21T20:47:30Z",
+    "points": 1
+  },
+  {
+    "course_name": "Real Analysis - 02 (Spring 2025)",
+    "assign_name": "Midterm I",
+    "due_date": "",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-02-28T19:19:42Z",
+    "points": 40
+  },
+  {
+    "course_name": "Undergraduate Student Organizations 2024-2025",
+    "assign_name": "Introduction Quiz",
+    "due_date": "",
+    "submitted_date": "2024-08-05T00:09:01Z",
+    "is_submitted": true,
+    "date_posted": "2024-02-01T17:33:21Z",
+    "points": 2
+  },
+  {
+    "course_name": "Automata Theory (Spring 2025)",
+    "assign_name": "Homework 1 Q3",
+    "due_date": "",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2025-01-21T20:47:47Z",
+    "points": 1
+  },
+  {
+    "course_name": "Undergraduate Student Organizations 2024-2025",
+    "assign_name": "Planning an Event Quiz",
+    "due_date": "",
+    "submitted_date": "2024-08-05T00:23:43Z",
+    "is_submitted": true,
+    "date_posted": "2024-02-01T17:33:22Z",
+    "points": 5
+  },
+  {
+    "course_name": "Undergraduate Student Organizations 2024-2025",
+    "assign_name": "Marketing and Posting Quiz",
+    "due_date": "",
+    "submitted_date": "2024-08-05T00:31:46Z",
+    "is_submitted": true,
+    "date_posted": "2024-02-01T17:33:22Z",
+    "points": 3
+  },
+  {
+    "course_name": "Undergraduate Student Organizations 2024-2025",
+    "assign_name": "Contracts and Travel Policies Quiz",
+    "due_date": "",
+    "submitted_date": "2024-08-05T00:13:05Z",
+    "is_submitted": true,
+    "date_posted": "2024-02-01T17:33:24Z",
+    "points": 5
+  },
+  {
+    "course_name": "Undergraduate Student Organizations 2024-2025",
+    "assign_name": "Fundraising Quiz",
+    "due_date": "",
+    "submitted_date": "2024-08-05T00:37:00Z",
+    "is_submitted": true,
+    "date_posted": "2024-02-01T17:33:24Z",
+    "points": 3
+  },
+  {
+    "course_name": "Undergraduate Student Organizations 2024-2025",
+    "assign_name": "Financial Policies Quiz",
+    "due_date": "",
+    "submitted_date": "2024-08-05T00:34:47Z",
+    "is_submitted": true,
+    "date_posted": "2024-02-01T17:33:23Z",
+    "points": 4
+  },
+  {
+    "course_name": "Undergraduate Student Organizations 2024-2025",
+    "assign_name": "ASUSF Funding Quiz",
+    "due_date": "",
+    "submitted_date": "2024-08-05T00:41:31Z",
+    "is_submitted": true,
+    "date_posted": "2024-02-01T17:33:20Z",
+    "points": 3
+  },
+  {
+    "course_name": "Undergraduate Student Organizations 2024-2025",
+    "assign_name": "Purchases and Financial Transactions Quiz",
+    "due_date": "",
+    "submitted_date": "2024-08-05T00:38:40Z",
+    "is_submitted": true,
+    "date_posted": "2024-02-01T17:33:25Z",
+    "points": 3
+  },
+  {
+    "course_name": "Undergraduate Student Organizations 2024-2025",
+    "assign_name": "Undergraduate Student Organizations Events and Marketing Module Survey",
+    "due_date": "",
+    "submitted_date": "",
+    "is_submitted": false,
+    "date_posted": "2024-07-26T09:27:06Z",
+    "points": 2
+  }
+]
