@@ -78,6 +78,8 @@ type Exit struct {
 	Money       int    `json:"money"`
 }
 
+const SCALE_FACTOR = 1e12
+
 func entry_processor(entries []Entry) (assignments []assignment) {
 
 	sort.Slice(entries, func(i, j int) bool {
@@ -102,12 +104,12 @@ func entry_processor(entries []Entry) (assignments []assignment) {
 	time_d0, _ := time.Parse(layout, entries[0].Date_posted)
 	time_d1, _ := time.Parse(layout, entries[0].Due_date)
 
-	durations[0] = (float64(time_d1.UnixNano()) - float64(time_d0.UnixNano())) / 1e9
+	durations[0] = (float64(time_d1.UnixNano()) - float64(time_d0.UnixNano())) / SCALE_FACTOR
 
 	if entries[0].Is_submitted {
 		time_c0, _ := time.Parse(layout, entries[0].Date_posted)
 		time_c1, _ := time.Parse(layout, entries[0].Submitted_date)
-		completion_durations[0] = (float64(time_c1.UnixNano()) - float64(time_c0.UnixNano())) / 1e9
+		completion_durations[0] = (float64(time_c1.UnixNano()) - float64(time_c0.UnixNano())) / SCALE_FACTOR
 	} else {
 		completion_durations[0] = -1.0
 	}
@@ -116,12 +118,12 @@ func entry_processor(entries []Entry) (assignments []assignment) {
 		time_di_prev, _ := time.Parse(layout, entries[i-1].Due_date)
 		time_di, _ := time.Parse(layout, entries[i].Due_date)
 
-		durations[i] = (float64(time_di.UnixNano()) - float64(time_di_prev.UnixNano())) / 1e9
+		durations[i] = (float64(time_di.UnixNano()) - float64(time_di_prev.UnixNano())) / SCALE_FACTOR
 
 		if entries[0].Is_submitted {
 			time_ci_prev, _ := time.Parse(layout, entries[i-1].Due_date)
 			time_ci, _ := time.Parse(layout, entries[i].Submitted_date)
-			completion_durations[i] = (float64(time_ci.UnixNano()) - float64(time_ci_prev.UnixNano())) / 1e9
+			completion_durations[i] = (float64(time_ci.UnixNano()) - float64(time_ci_prev.UnixNano())) / SCALE_FACTOR
 		} else {
 			completion_durations[0] = -1.0
 		}
@@ -159,6 +161,7 @@ func disjoint_assignment_process(assignments []assignment) (submitted_assignment
 }
 
 func data_chugger_to_model(assignments []assignment) func(float64, float64) float64 {
+
 	sort.Slice(assignments, func(i, j int) bool {
 		layout := time.RFC3339
 
@@ -186,9 +189,9 @@ func data_chugger_to_model(assignments []assignment) func(float64, float64) floa
 	time_c0, _ := time.Parse(layout, assignments[0].entry.Date_posted)
 	time_c1, _ := time.Parse(layout, assignments[0].entry.Submitted_date)
 
-	durations[0] = (float64(time_d1.UnixNano()) - float64(time_d0.UnixNano())) / 1e9
+	durations[0] = (float64(time_d1.UnixNano()) - float64(time_d0.UnixNano())) / SCALE_FACTOR
 	grade_proportions[0] = float64(assignments[0].entry.Points)
-	completion_durations[0] = (float64(time_c1.UnixNano()) - float64(time_c0.UnixNano())) / 1e9
+	completion_durations[0] = (float64(time_c1.UnixNano()) - float64(time_c0.UnixNano())) / SCALE_FACTOR
 
 	for i := 1; i < n; i++ {
 		time_di_prev, _ := time.Parse(layout, assignments[i-1].entry.Due_date)
@@ -197,9 +200,9 @@ func data_chugger_to_model(assignments []assignment) func(float64, float64) floa
 		time_ci_prev, _ := time.Parse(layout, assignments[i-1].entry.Due_date)
 		time_ci, _ := time.Parse(layout, assignments[i].entry.Submitted_date)
 
-		durations[i] = (float64(time_di.UnixNano()) - float64(time_di_prev.UnixNano())) / 1e9
+		durations[i] = (float64(time_di.UnixNano()) - float64(time_di_prev.UnixNano())) / SCALE_FACTOR
 		grade_proportions[i] = float64(assignments[i].entry.Points)
-		completion_durations[i] = (float64(time_ci.UnixNano()) - float64(time_ci_prev.UnixNano())) / 1e9
+		completion_durations[i] = (float64(time_ci.UnixNano()) - float64(time_ci_prev.UnixNano())) / SCALE_FACTOR
 	}
 
 	return model.LinearRegressionModel(durations, grade_proportions, completion_durations)
@@ -210,13 +213,13 @@ func urgency_sort(assignments []assignment) (unsubmitted []assignment) {
 
 	linear_reg_model := data_chugger_to_model(submitted_assignments)
 
-	today_time := float64(time.Now().UnixNano()) / 1e9
+	today_time := float64(time.Now().UnixNano()) / SCALE_FACTOR
 	sort.Slice(unsubmitted_assignments, func(i, j int) bool {
 		layout := time.RFC3339
 		time_i, _ := time.Parse(layout, assignments[i].entry.Due_date)
 		time_j, _ := time.Parse(layout, assignments[j].entry.Due_date)
-		today_duration_i := today_time - (float64(time_i.UnixNano()) / 1e9)
-		today_duration_j := today_time - (float64(time_j.UnixNano()) / 1e9)
+		today_duration_i := today_time - (float64(time_i.UnixNano()) / SCALE_FACTOR)
+		today_duration_j := today_time - (float64(time_j.UnixNano()) / SCALE_FACTOR)
 		grade_proportion_i := assignments[i].entry.Points
 		grade_proportion_j := assignments[j].entry.Points
 		expected_time_i := linear_reg_model(assignments[i].duration, float64(grade_proportion_i))

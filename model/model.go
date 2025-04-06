@@ -7,72 +7,128 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
+// LinearRegressionModel performs linear regression using Singular Value Decomposition (SVD)
+// func LinearRegressionModel(x1 []float64, x2 []float64, y1 []float64) func(float64, float64) float64 {
+// 	n := len(x1)
+
+// 	// Handle empty input
+// 	if n == 0 {
+// 		fmt.Println("No data to train on")
+// 		return func(time_duration float64, grade_proportion float64) float64 {
+// 			return 0.0
+// 		}
+// 	}
+
+// 	// Number of features (including bias term)
+// 	rows := 3 // for bias (ones), x1, and x2
+
+// 	// Create the design matrix X (with bias term)
+// 	data := make([]float64, 0, n*3)
+// 	for i := 0; i < n; i++ {
+// 		// Append (bias term, x1, x2) for each row
+// 		data = append(data, 1.0, x1[i], x2[i])
+// 	}
+
+// 	// Create the X matrix (design matrix) as a dense matrix
+// 	X := mat.NewDense(n, rows, data)
+
+// 	// Create the Y vector (response variable)
+// 	y := mat.NewVecDense(len(y1), y1)
+
+// 	// Step 1: Perform Singular Value Decomposition (SVD) on X
+// 	var svd mat.SVD
+// 	ok := svd.Factorize(X, mat.SVDThin)
+// 	if !ok {
+// 		log.Fatal("SVD factorization failed")
+// 	}
+
+// 	// Step 2: Compute the solution (beta) using the SVD: beta = V * Sigma^-1 * U^T * y
+// 	// First, calculate U^T * y
+// 	var UTransY mat.VecDense
+// 	UTransY.MulVec(svd.UTo(), y)
+
+// 	// Create the inverse of the singular values (Sigma^-1)
+// 	sigmaInv := make([]float64, len(svd.Values))
+// 	for i := 0; i < len(svd.Values); i++ {
+// 		if svd.Values[i] > 1e-10 { // Avoid division by zero
+// 			sigmaInv[i] = 1.0 / svd.Values[i]
+// 		} else {
+// 			sigmaInv[i] = 0
+// 		}
+// 	}
+
+// 	// Now, multiply U^T * y by the inverse of the singular values
+// 	for i := 0; i < len(svd.Values); i++ {
+// 		UTransY.SetVec(i, UTransY.AtVec(i)*sigmaInv[i])
+// 	}
+
+// 	// Multiply by V to get the final beta coefficients
+// 	var beta mat.VecDense
+// 	beta.MulVec(svd.Vt, &UTransY)
+
+// 	// Return a function that computes the prediction given the coefficients
+// 	return func(time_duration float64, grade_proportion float64) float64 {
+// 		// y = beta_0 + beta_1 * x1 + beta_2 * x2
+// 		return beta.At(0) + time_duration*beta.At(1) + grade_proportion*beta.At(2)
+// 	}
+// }
+
 func LinearRegressionModel(x1 []float64, x2 []float64, y1 []float64) func(float64, float64) float64 {
 	n := len(x1)
-
-	// Handle empty input
 	if n == 0 {
-		fmt.Println("hello")
+		fmt.Println("No data to train on")
 		return func(time_duration float64, grade_proportion float64) float64 {
-			return time_duration
+			return 0.0
 		}
 	}
-
-	// Define the number of columns in the design matrix (X)
-	rows := 3 // bias (ones), x1, x2
-
-	// Create a slice for the ones column (bias term)
-	ones := make([]float64, n)
-	for i := range ones {
-		ones[i] = 1.0
-	}
-
-	// Create the data slice to store the design matrix X (with bias term)
-	data := make([]float64, 0, n*3)
+	fmt.Println(x1)
+	fmt.Println(x2)
+	rows := 3
+	data := make([]float64, 0, n*rows)
 	for i := 0; i < n; i++ {
-		// Append (bias term, x1, x2) for each row
-		data = append(data, ones[i], x1[i], x2[i])
+		data = append(data, 1.0, x1[i], x2[i])
 	}
-
-	// Create the X matrix (design matrix)
 	X := mat.NewDense(n, rows, data)
+	y := mat.NewVecDense(len(y1), y1)
 
-	// Step 1: Compute X^T (transpose of X)
+	// Compute XᵗX
 	var XT mat.Dense
 	XT.CloneFrom(X.T())
-
-	// Step 2: Compute X^T * X
 	var XTX mat.Dense
 	XTX.Mul(&XT, X)
 
-	// Step 3: Compute the inverse of (X^T * X)
-	var XTXInv mat.Dense
-	if err := XTXInv.Inverse(&XTX); err != nil {
-		fmt.Println("Matrix inversion failed")
-		return func(time_duration float64, grade_proportion float64) float64 {
-			return time_duration
-		}
+	// Regularize: Add λI
+	lambda := 1e-8
+	for i := 0; i < rows; i++ {
+		XTX.Set(i, i, XTX.At(i, i)+lambda)
 	}
 
-	// Step 4: Compute X^T * y
-	y := mat.NewVecDense(len(y1), y1)
+	// Compute Xᵗy
 	var XTy mat.VecDense
 	XTy.MulVec(&XT, y)
 
-	// Step 5: Compute (X^T * X)^(-1) * X^T * y to get the regression coefficients (beta)
+	// Solve (XᵗX + λI) β = Xᵗy
 	var beta mat.VecDense
-	beta.MulVec(&XTXInv, &XTy)
+	err := beta.SolveVec(&XTX, &XTy)
 
-	// Return a function that computes the prediction given the coefficients
+	fmt.Println(X)
+	if err != nil {
+		fmt.Println("Solve failed:", err)
+		return func(time_duration float64, grade_proportion float64) float64 {
+			return 0.0
+		}
+	}
+
+	// Return predictor
 	return func(time_duration float64, grade_proportion float64) float64 {
-		// y = beta_0 + beta_1 * x1 + beta_2 * x2
 		return beta.AtVec(0) + time_duration*beta.AtVec(1) + grade_proportion*beta.AtVec(2)
 	}
 }
 
 func UrgencyDetermination(late_time float64, expected_time float64, grade_proportion float64) float64 {
-	tuning_factor := 0.1
-	return math.Pow(math.E, tuning_factor*(late_time+expected_time)) * grade_proportion
+	tuning_factor := 0.01
+	return grade_proportion * tuning_factor / math.Abs((late_time + expected_time))
+	//return math.Pow(math.E, tuning_factor*(late_time+expected_time)) * grade_proportion / (late_time+expected_time)
 
 }
 
