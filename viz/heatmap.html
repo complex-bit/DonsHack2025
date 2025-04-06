@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<div id="my_dataviz"></div>
+<div id="node_graph"></div>
+
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+<script>
+  var margin = { top: 50, right: 25, bottom: 30, left: 40 },
+    width = 450 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
+
+  var nodeGraphMargin = { top: 50, right: 25, bottom: 30, left: 40 },
+    nodeGraphWidth = 450 - nodeGraphMargin.left - nodeGraphMargin.right, 
+    nodeGraphHeight = 300 - nodeGraphMargin.top - nodeGraphMargin.bottom;
+
+  var svg = d3.select("#my_dataviz")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  var nodeSvg = d3.select("#node_graph")
+    .append("svg")
+    .attr("width", nodeGraphWidth + nodeGraphMargin.left + nodeGraphMargin.right)
+    .attr("height", nodeGraphHeight + nodeGraphMargin.top + nodeGraphMargin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + nodeGraphMargin.left + "," + nodeGraphMargin.top + ")");
+
+  d3.json("entries.json", function(data) {
+    var dailyCounts = {};
+    var monthlyCounts = {}; 
+    data.forEach(function(d) {
+      var dateStr = d.submitted_date; 
+      var date = new Date(dateStr);
+      
+      if (isNaN(date)) {
+        console.log("Invalid date:", dateStr); 
+      }
+
+      var year = date.getFullYear();
+      var month = date.getMonth(); 
+      var day = date.getDate();
+      var key = year + '-' + (month + 1) + '-' + day;
+
+      if (!dailyCounts[key]) {
+        dailyCounts[key] = 0;
+      }
+      dailyCounts[key]++;
+
+      if (!monthlyCounts[month]) {
+        monthlyCounts[month] = 0;
+      }
+      monthlyCounts[month]++;
+    });
+
+    console.log("Monthly Submission Counts:");
+    Object.keys(monthlyCounts).forEach(function(month) {
+      console.log("Month " + (parseInt(month) + 1) + ": " + monthlyCounts[month] + " submissions");
+    });
+
+    var heatmapData = [];
+    var rows = 12; 
+    var columns = 31; 
+    var daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]; 
+    for (var month = 0; month < 12; month++) {
+      for (var day = 1; day <= daysInMonth[month]; day++) {
+        var count = dailyCounts["2024-" + (month + 1) + "-" + day] || 0;
+        heatmapData.push({
+          group: day, 
+          variable: month, 
+          value: count
+        });
+      }
+    }
+
+    var maxValue = d3.max(heatmapData, function(d) { return d.value; });
+    
+    var x = d3.scaleBand()
+      .range([0, width])
+      .domain(d3.range(1, 32)) 
+      .padding(0.05);
+
+    var y = d3.scaleBand()
+      .range([height, 0])
+      .domain(d3.range(0, 12)) 
+      .padding(0.05);
+
+    var myColor = d3.scaleSequential()
+      .interpolator(d3.interpolateCool)
+      .domain([0, maxValue]);
+
+    var tooltip = d3.select("#my_dataviz")
+      .append("div")
+      .style("opacity", 0)
+      .attr("class", "tooltip")
+      .style("position", "absolute")
+      .style("background-color", "white")
+      .style("border", "solid")
+      .style("border-width", "2px")
+      .style("border-radius", "5px")
+      .style("padding", "5px");
+
+    var mouseover = function(d) {
+      tooltip
+        .style("opacity", 1);
+
+      d3.select(this)
+        .style("stroke", "black")
+        .style("opacity", 1);
+    };
+
+    var mousemove = function(d) {
+      tooltip
+        .html("submissions: " + d.value)
+        .style("left", (d3.mouse(this)[0] + 10) + "px")
+        .style("top", (d3.mouse(this)[1] - 30) + "px");
+    };
+
+    var mouseleave = function(d) {
+      tooltip
+        .style("opacity", 0);
+
+      d3.select(this)
+        .style("stroke", "none")
+        .style("opacity", 0.8);
+    };
+
+    svg.selectAll()
+      .data(heatmapData, function(d) { return d.group + ':' + d.variable; })
+      .enter()
+      .append("rect")
+      .attr("x", function(d) { return x(d.group); }) 
+      .attr("y", function(d) { return y(d.variable); }) 
+      .attr("rx", 4)
+      .attr("ry", 4)
+      .attr("width", x.bandwidth())
+      .attr("height", y.bandwidth()) 
+      .style("fill", function(d) { return myColor(d.value); })
+      .style("stroke-width", 4)
+      .style("stroke", "none")
+      .style("opacity", 0.8)
+      .on("mouseover", mouseover)
+      .on("mousemove", mousemove)
+      .on("mouseleave", mouseleave);
+
+    svg.append("text")
+      .attr("x", 0)
+      .attr("y", -20)
+      .attr("text-anchor", "left")
+      .style("font-size", "14px")
+      .style("fill", "grey")
+      .style("max-width", 400)
+      .text("submissions");
+  });
+</script>
