@@ -1,0 +1,30 @@
+[gd_scene load_steps=6 format=3 uid="uid://nxsddqoryyw4"]
+
+[ext_resource type="PackedScene" uid="uid://b441qhyadwbv0" path="res://Scenes/npc.tscn" id="1_7hld2"]
+[ext_resource type="Script" uid="uid://dbqn5n6ow25vu" path="res://Scenes/navigation_reg.gd" id="1_ybnwo"]
+[ext_resource type="PackedScene" uid="uid://hg2yhg4m3hwd" path="res://Scenes/npc1.tscn" id="3_jf5ke"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_a5pih"]
+vertices = PackedVector3Array(-3.90599, 1.08074, -3.94504, -3.90599, 1.08074, 4.05496, 4.09401, 1.08074, 4.05496, 4.09401, 1.08074, -3.94504)
+polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
+agent_radius = 1.0
+
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_a5pih"]
+albedo_color = Color(0.376471, 0.705882, 0.129412, 1)
+
+[node name="Node3D" type="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0275803, -0.54298, 0.0334325)
+navigation_mesh = SubResource("NavigationMesh_a5pih")
+script = ExtResource("1_ybnwo")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0940132, 0.0807407, 0.0549564)
+material_override = SubResource("ORMMaterial3D_a5pih")
+use_collision = true
+size = Vector3(10, 1, 10)
+
+[node name="CharacterBody3D" parent="." instance=ExtResource("1_7hld2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.922501, 0)
+
+[node name="CharacterBody3D2" parent="." instance=ExtResource("3_jf5ke")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.170624, 0.922501, -0.508036)

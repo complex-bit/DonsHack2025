@@ -1,0 +1,38 @@
+[remap]
+
+importer="texture"
+type="CompressedTexture2D"
+uid="uid://rc4st882mqjc"
+path.s3tc="res://.godot/imported/uploads_files_3829098_SAKURA_2_SAKURA_BRUNCHES_NORMAL.png-7c5e9810f0d3cbfc9aff2bdfbd0ac63c.s3tc.ctex"
+metadata={
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
+}
+generator_parameters={
+"md5": "c1fadfeadeb9b13505cdf4daa810e8d4"
+}
+
+[deps]
+
+source_file="res://buildings/uploads_files_3829098_SAKURA_2_SAKURA_BRUNCHES_NORMAL.png"
+dest_files=["res://.godot/imported/uploads_files_3829098_SAKURA_2_SAKURA_BRUNCHES_NORMAL.png-7c5e9810f0d3cbfc9aff2bdfbd0ac63c.s3tc.ctex"]
+
+[params]
+
+compress/mode=2
+compress/high_quality=false
+compress/lossy_quality=0.7
+compress/hdr_compression=1
+compress/normal_map=1
+compress/channel_pack=0
+mipmaps/generate=true
+mipmaps/limit=-1
+roughness/mode=1
+roughness/src_normal="res://buildings/uploads_files_3829098_SAKURA_2_SAKURA_BRUNCHES_NORMAL.png"
+process/fix_alpha_border=true
+process/premult_alpha=false
+process/normal_map_invert_y=false
+process/hdr_as_srgb=false
+process/hdr_clamp_exposure=false
+process/size_limit=0
+detect_3d/compress_to=0

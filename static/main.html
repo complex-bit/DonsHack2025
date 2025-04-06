@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Todo List with Godot Game</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      margin: 0;
+      background-color: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    
+    header {
+      background-color: #388e3c;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      font-size: 32px;
+      font-weight: normal;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      background-image: linear-gradient(45deg, #4CAF50, #81C784);
+    }
+    
+    /* Tabs Navigation */
+    .tabs {
+      display: flex;
+      background-color: #2d6e31;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .tab-button {
+      padding: 15px 25px;
+      background-color: transparent;
+      border: none;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      flex: 1;
+      text-align: center;
+    }
+    
+    .tab-button:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .tab-button.active {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-bottom: 3px solid white;
+    }
+    
+    /* Container for tab content */
+    .tab-content {
+      flex: 1;
+      display: none;
+      padding: 20px;
+      overflow: auto;
+    }
+    
+    .tab-content.active {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Todo List Styling */
+    .todo-header {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    
+    .todo-input {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px 0 0 4px;
+      font-size: 16px;
+    }
+    
+    .refresh-button {
+      padding: 12px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 0 4px 4px 0;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    
+    .refresh-button:hover {
+      background-color: #388e3c;
+    }
+    
+    .submit-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    
+    .submit-button {
+      padding: 12px 30px;
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.3s;
+    }
+    
+    .submit-button:hover {
+      background-color: #1976D2;
+    }
+    
+    .todo-list {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .todo-item {
+      background-color: white;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      animation: fadeIn 0.3s ease-in;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .todo-checkbox {
+      margin-right: 15px;
+      width: 20px;
+      height: 20px;
+      accent-color: #4CAF50;
+    }
+    
+    .todo-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .todo-class {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+    
+    .todo-text {
+      font-size: 16px;
+    }
+    
+    .todo-date {
+      font-size: 12px;
+      color: #f44336;
+      margin-top: 4px;
+    }
+    
+    .todo-item.completed .todo-text {
+      text-decoration: line-through;
+      color: #999;
+    }
+    
+    .delete-button {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 12px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    
+    .delete-button:hover {
+      background-color: #d32f2f;
+    }
+    
+    /* Game Container Styling */
+    .game-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #444;
+    }
+    
+    .game-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    
+    /* Empty state */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 200px;
+      color: #999;
+      text-align: center;
+    }
+    
+    .empty-state i {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    Dreamville
+  </header>
+  
+  <!-- Tab Navigation -->
+  <div class="tabs">
+    <button class="tab-button active" onclick="openTab('todo-tab')">Today's Quest</button>
+    <button class="tab-button" onclick="openTab('game-tab')">Preview World</button>
+  </div>
+  
+  <!-- Todo List Tab -->
+  <div id="todo-tab" class="tab-content active">
+    <div class="todo-header">
+      <input type="text" class="todo-input" id="todo-input" placeholder="Search tasks...">
+      <button class="refresh-button" onclick="refreshTasks()">↻</button>
+    </div>
+    
+    <ul class="todo-list" id="todo-list">
+      <!-- Todo items will be added here -->
+    </ul>
+    
+    <div id="empty-state" class="empty-state">
+      <i>📝</i>
+      <p>Loading tasks from Canvas...</p>
+    </div>
+  </div>
+  
+  <!-- Game Tab -->
+  <div id="game-tab" class="tab-content">
+    <div class="game-container" id="game-container">
+      <!-- Game iframe will be inserted here when tab is activated -->
+    </div>
+  </div>
+  
+  <script>
+    // Replace the todos array with an empty array since we'll load from the server
+    let todos = [];
+    
+    // Track which tasks have been modified
+    let modifiedTasks = new Set();
+    
+    // Initialize todo list
+    function initTodoList() {
+      // Fetch assignments from the server
+      fetchAssignments();
+      
+      // Add submit button
+      const submitContainer = document.createElement('div');
+      submitContainer.className = 'submit-container';
+      
+      const submitButton = document.createElement('button');
+      submitButton.className = 'submit-button';
+      submitButton.textContent = 'Submit Changes';
+      submitButton.addEventListener('click', submitChanges);
+      
+      submitContainer.appendChild(submitButton);
+      document.getElementById('todo-tab').appendChild(submitContainer);
+    }
+    
+    // Fetch assignments from the backend
+    function fetchAssignments() {
+      const todoList = document.getElementById('todo-list');
+      todoList.innerHTML = '';
+      
+      const emptyState = document.getElementById('empty-state');
+      emptyState.style.display = 'flex';
+      emptyState.querySelector('p').textContent = 'Loading tasks from server...';
+      
+      // Fetch from the backend
+      fetch('http://localhost:8080/assignments')
+        .then(response => response.json())
+        .then(data => {
+          todos = data.map((item, index) => ({
+            id: index + 1,
+            class: item.course_name,
+            task: item.assign_name,
+            dueDate: item.due_date.split('T')[0], // Format the date
+            reward: item.money,
+            completed: false
+          }));
+          
+          // Sort tasks by due date
+          todos.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+          
+          updateTodoList();
+          emptyState.style.display = 'none';
+        })
+        .catch(error => {
+          console.error('Error fetching assignments:', error);
+          emptyState.querySelector('p').textContent = 'Error loading tasks. Please try again.';
+        });
+    }
+    
+    // Refresh tasks - now actually fetches from the backend
+    function refreshTasks() {
+      // Reset modified tasks since we're refreshing from the source
+      modifiedTasks.clear();
+      
+      // Fetch assignments
+      fetchAssignments();
+    }
+    
+    // Toggle todo completion
+    function toggleTodo(id) {
+      todos = todos.map(todo => {
+        if (todo.id === id) {
+          // Track this task as modified
+          modifiedTasks.add(id);
+          
+          return {
+            ...todo,
+            completed: !todo.completed
+          };
+        }
+        return todo;
+      });
+      
+      updateTodoList();
+    }
+    
+    // Submit changes to backend
+    function submitChanges() {
+      if (modifiedTasks.size === 0) {
+        alert('No changes to submit');
+        return;
+      }
+      
+      // Get only the modified tasks
+      const changedTasks = todos.filter(todo => modifiedTasks.has(todo.id));
+      
+      // In a real implementation, this would send to your backend
+      console.log('Submitting changed tasks to backend:', changedTasks);
+      
+      // Create JSON to display what would be sent
+      const jsonData = JSON.stringify(changedTasks, null, 2);
+      alert(`Changes submitted!\n\nData sent to backend:\n${jsonData}`);
+      
+      // Clear the modified tasks set after submission
+      modifiedTasks.clear();
+    }
+    
+    // Filter todos based on search input
+    function filterTodos() {
+      const searchText = document.getElementById('todo-input').value.toLowerCase();
+      
+      // If empty, show all todos
+      if (!searchText) {
+        updateTodoList();
+        return;
+      }
+      
+      // Filter todos based on search text
+      const filteredTodos = todos.filter(todo => 
+        todo.task.toLowerCase().includes(searchText) || 
+        todo.class.toLowerCase().includes(searchText)
+      );
+      
+      updateTodoList(filteredTodos);
+    }
+    
+    // Update todo list in DOM
+    function updateTodoList(todosToDisplay = todos) {
+      const todoList = document.getElementById('todo-list');
+      const emptyState = document.getElementById('empty-state');
+      
+      // Clear current list
+      todoList.innerHTML = '';
+      
+      // Show empty state if no todos
+      if (todosToDisplay.length === 0) {
+        emptyState.style.display = 'flex';
+        emptyState.querySelector('p').textContent = 'No matching tasks found';
+      } else {
+        emptyState.style.display = 'none';
+        
+        // Add each todo to the list
+        todosToDisplay.forEach(todo => {
+          const li = document.createElement('li');
+          li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+          
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.className = 'todo-checkbox';
+          checkbox.checked = todo.completed;
+          checkbox.addEventListener('change', () => toggleTodo(todo.id));
+          
+          const infoDiv = document.createElement('div');
+          infoDiv.className = 'todo-info';
+          
+          const classSpan = document.createElement('span');
+          classSpan.className = 'todo-class';
+          classSpan.textContent = todo.class;
+          
+          const taskSpan = document.createElement('span');
+          taskSpan.className = 'todo-text';
+          taskSpan.textContent = todo.task;
+          
+          // Format the due date
+          const dueDate = new Date(todo.dueDate);
+          const formattedDate = dueDate.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric',
+            year: 'numeric'
+          });
+          
+          const dateSpan = document.createElement('span');
+          dateSpan.className = 'todo-date';
+          dateSpan.textContent = `Due: ${formattedDate}`;
+          
+          // Add reward information
+          const rewardSpan = document.createElement('span');
+          rewardSpan.className = 'todo-reward';
+          rewardSpan.textContent = `Reward: ${todo.reward} coins`;
+          rewardSpan.style.color = '#4CAF50';
+          rewardSpan.style.fontWeight = 'bold';
+          rewardSpan.style.marginTop = '4px';
+          
+          // Check if past due
+          if (new Date() > dueDate && !todo.completed) {
+            dateSpan.style.fontWeight = 'bold';
+          }
+          
+          infoDiv.appendChild(classSpan);
+          infoDiv.appendChild(taskSpan);
+          infoDiv.appendChild(dateSpan);
+          infoDiv.appendChild(rewardSpan);
+          
+          li.appendChild(checkbox);
+          li.appendChild(infoDiv);
+          
+          todoList.appendChild(li);
+        });
+      }
+    }
+    
+    // Search on input change
+    document.getElementById('todo-input').addEventListener('keyup', filterTodos);
+    
+    // Tab Switching Functionality
+    function openTab(tabId) {
+      // Hide all tab content
+      const tabContents = document.getElementsByClassName('tab-content');
+      for (let i = 0; i < tabContents.length; i++) {
+        tabContents[i].classList.remove('active');
+      }
+      
+      // Deactivate all tab buttons
+      const tabButtons = document.getElementsByClassName('tab-button');
+      for (let i = 0; i < tabButtons.length; i++) {
+        tabButtons[i].classList.remove('active');
+      }
+      
+      // Activate the selected tab
+      document.getElementById(tabId).classList.add('active');
+      
+      // Find and activate the corresponding button
+      const buttons = document.getElementsByClassName('tab-button');
+      for (let i = 0; i < buttons.length; i++) {
+        if (buttons[i].getAttribute('onclick').includes(tabId)) {
+          buttons[i].classList.add('active');
+        }
+      }
+      
+      // If game tab is activated, reload the game
+      if (tabId === 'game-tab') {
+        loadGame();
+      }
+    }
+    
+    // Load Godot game
+    function loadGame() {
+      const gameContainer = document.getElementById('game-container');
+      gameContainer.innerHTML = '';
+      
+      const iframe = document.createElement('iframe');
+      iframe.className = 'game-iframe';
+      iframe.src = './static/godot_game/index.html';  // or full path
+      
+      gameContainer.appendChild(iframe);
+    }
+    
+    // Initialize the app
+    initTodoList();
+  </script>
+</body>
+</html>

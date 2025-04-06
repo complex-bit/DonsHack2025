@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://ch35nc60niedd"]
+
+[ext_resource type="Script" uid="uid://mu7v2ih0orlq" path="res://camera.gd" id="1_5udrv"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_3yuvx"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xstv6"]
+
+[node name="Main_Scene" type="Node3D"]
+script = ExtResource("1_5udrv")
+
+[node name="cameraOrigin" type="Node3D" parent="."]
+
+[node name="SpringArm3D" type="SpringArm3D" parent="cameraOrigin"]
+shape = SubResource("SphereShape3D_3yuvx")
+spring_length = 80.0
+
+[node name="Camera3D" type="Camera3D" parent="cameraOrigin/SpringArm3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 65)
+
+[node name="Area3D" type="Area3D" parent="cameraOrigin/SpringArm3D/Camera3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="cameraOrigin/SpringArm3D/Camera3D/Area3D"]
+shape = SubResource("BoxShape3D_xstv6")
