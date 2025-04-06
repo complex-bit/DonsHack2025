@@ -48,7 +48,7 @@ void fragment() {
 	vec3 surface_albedo = mix(albedo1, albedo2, fresnel(fresnel_size, NORMAL, VIEW));
 	float surface_alpha = fresnel(fresnel_size, NORMAL, VIEW) * fresnel_scale;
 	ALBEDO = surface_albedo;
-	ROUGHNESS = 1.0;
+	ROUGHNESS = roughness;
 	NORMAL_MAP = texture_mix;
 	ALPHA = 1.0;//surface_alpha; ; // Set to 1.0 for deep sea.
 }

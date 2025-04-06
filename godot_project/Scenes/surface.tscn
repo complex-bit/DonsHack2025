@@ -53,7 +53,7 @@ shader_parameter/albedo2 = Color(0, 0.190765, 0.190858, 1)
 shader_parameter/roughness = 0.01
 shader_parameter/wave = SubResource("NoiseTexture2D_0i7l3")
 shader_parameter/noise_scale = 4.0
-shader_parameter/wave_height_scale = 0.1
+shader_parameter/wave_height_scale = 0.5
 shader_parameter/wave_time_scale = 0.02
 shader_parameter/texture_normal1 = SubResource("NoiseTexture2D_2tapi")
 shader_parameter/texture_normal2 = SubResource("NoiseTexture2D_uh5sj")
@@ -77,6 +77,7 @@ tonemap_mode = 2
 
 [node name="Surface" type="MeshInstance3D"]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, -1.82748, 1.11226, 1.02369)
+transparency = 0.24
 cast_shadow = 0
 mesh = SubResource("PlaneMesh_k5s0u")
 surface_material_override/0 = SubResource("ShaderMaterial_2tapi")

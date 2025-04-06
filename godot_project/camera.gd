@@ -4,7 +4,7 @@ extends Node3D
 # Flip these values since the camera seems to be inverted
 @export var min_vertical_angle: float = -70.0  # Looking up limit (negative in Godot means looking up)
 @export var max_vertical_angle: float = -10.0    # Looking down limit (positive means looking down)
-@onready var spring_arm: SpringArm3D = $SpringArm3D
+@onready var spring_arm: SpringArm3D = $SubViewportContainer/SubViewport/SpringArm3D
 
 # Current rotation values
 var rotation_x: float = deg_to_rad(-25.0)  # Start at -25 degrees (looking down at island)
@@ -71,12 +71,12 @@ func _physics_process(delta: float):
 	# Optional debug info
 	# print("Rotation X: ", rad_to_deg(rotation_x), " Y: ", rad_to_deg(rotation_y))
 
-# Input handling for mouse controls and zoom
-func _input(event):
-	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			# Zoom in (decrease spring length)
-			target_spring_length = max(min_spring_length, target_spring_length - zoom_speed)
-		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			# Zoom out (increase spring length)
-			target_spring_length = min(max_spring_length, target_spring_length + zoom_speed)
+## Input handling for mouse controls and zoom
+#func _input(event):
+	#if event is InputEventMouseButton:
+		#if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			## Zoom in (decrease spring length)
+			#target_spring_length = max(min_spring_length, target_spring_length - zoom_speed)
+		#elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			## Zoom out (increase spring length)
+			#target_spring_length = min(max_spring_length, target_spring_length + zoom_speed)
