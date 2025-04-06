@@ -288,7 +288,7 @@ func getNextPageURL(linkHeader string) string {
 
 func getEntries(courseId string, course_name string) []Entry {
 	// Replace with your actual values
-	canvasToken := "1018~WyU77kVnVHxLmxLnMkQnPKBYAnJafrzr7XEFJXYUtG8RQDKEhJFNVCyVPhhfD77e" //os.Getenv("CANVAS_TOKEN") // or hardcode for testing
+	canvasToken := get_key() //os.Getenv("CANVAS_TOKEN") // or hardcode for testing
 	courseID := courseId
 	baseURL := "https://usfca.instructure.com"
 	var all_canvas_assign []CanvasAssignment
@@ -339,42 +339,6 @@ func getEntries(courseId string, course_name string) []Entry {
 		url = nextPage
 	}
 
-	// // Create request
-	// req, err := http.NewRequest("GET", url, nil)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// // Set headers
-	// req.Header.Set("Authorization", "Bearer "+canvasToken)
-
-	// // Send request
-	// client := &http.Client{}
-	// resp, err := client.Do(req)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// defer resp.Body.Close()
-
-	// // Read body
-	// body, err := io.ReadAll(resp.Body)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// ////fmt.Println(string(body))
-	// // Parse JSON
-	// var assign_entry []CanvasAssignment
-	// err = json.Unmarshal(body, &assign_entry)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// //fmt.Println("HELLOOOOOOOOOOOOOOOOO")
-	// //fmt.Println(assign_entry)
-	// fmt.Println()
-	// fmt.Println()
-	// fmt.Println(assign_entry)
-	// fmt.Println()
-	// fmt.Println()
 	n := len(all_canvas_assign)
 	entries := make([]Entry, n)
 	for i := 0; i < n; i++ {
@@ -403,7 +367,7 @@ type Course struct {
 }
 
 func getCourseEntries() []Entry {
-	canvasToken := "1018~WyU77kVnVHxLmxLnMkQnPKBYAnJafrzr7XEFJXYUtG8RQDKEhJFNVCyVPhhfD77e"
+	canvasToken := get_key()
 
 	//baseURL := "https://usfca.instructure.com"
 	req, _ := http.NewRequest("GET", "https://usfca.instructure.com/api/v1/users/self/courses?include[]=enrollments&enrollment_state=active", nil)
