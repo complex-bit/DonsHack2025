@@ -2,7 +2,7 @@ extends Node3D
 
 # Store the node reference statically so it's accessible from the callback
 static var _instance: Node3D
-@onready var rich_text_label = $Control/PanelContainer/RichTextLabel
+@onready var rich_text_label = $PanelContainer/RichTextLabel
 
 func _ready():
 	_instance = self
@@ -12,11 +12,6 @@ func _ready():
 	if OS.has_feature("web"):
 		var window = JavaScriptBridge.get_interface("window")
 		window.getFile(fileLoadCallback)
-
-func _on_upload_button_down() -> void:
-	if OS.has_feature("web"):
-		var window = JavaScriptBridge.get_interface("window")
-		window.getFile(JavaScriptBridge.create_callback(FileParser))
 
 static func FileParser(args):
 	if _instance and _instance.rich_text_label:

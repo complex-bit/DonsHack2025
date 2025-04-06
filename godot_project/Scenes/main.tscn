@@ -286,11 +286,11 @@ transform = Transform3D(0.0875031, 0, 0, 0, 0.0551519, 0, 0, 0, 0.0684555, -0.84
 script = ExtResource("4_kry3j")
 
 [node name="PanelContainer" type="PanelContainer" parent="SubViewportContainer/SubViewport/Reactahh"]
-offset_left = 779.0
-offset_top = 14.0
-offset_right = 879.0
-offset_bottom = 49.0
-scale = Vector2(2, 2)
+offset_left = 368.0
+offset_top = 8.5
+offset_right = 458.0
+offset_bottom = 33.5
+scale = Vector2(1.5, 1.5)
 
 [node name="RichTextLabel" type="RichTextLabel" parent="SubViewportContainer/SubViewport/Reactahh/PanelContainer"]
 layout_mode = 2
@@ -298,8 +298,8 @@ text = "YAY"
 tab_size = 1
 
 [node name="Gold-coin-icon-2048x2048-loznlayl" type="Sprite2D" parent="SubViewportContainer/SubViewport/Reactahh/PanelContainer"]
-position = Vector2(124, 17.5)
-scale = Vector2(0.0159815, 0.0153613)
+position = Vector2(108.333, 12.3333)
+scale = Vector2(0.0122822, 0.0153613)
 texture = ExtResource("3_21xkr")
 
 [node name="ground_placements" parent="SubViewportContainer/SubViewport" instance=ExtResource("8_344ge")]

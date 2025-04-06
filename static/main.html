@@ -227,13 +227,13 @@
 </head>
 <body>
   <header>
-    Task Manager
+    Dreamville
   </header>
   
   <!-- Tab Navigation -->
   <div class="tabs">
-    <button class="tab-button active" onclick="openTab('todo-tab')">Todo List</button>
-    <button class="tab-button" onclick="openTab('game-tab')">Godot Game</button>
+    <button class="tab-button active" onclick="openTab('todo-tab')">Today's Quest</button>
+    <button class="tab-button" onclick="openTab('game-tab')">Preview World</button>
   </div>
   
   <!-- Todo List Tab -->
@@ -261,44 +261,16 @@
   </div>
   
   <script>
-    // Sample data in the required format - this would be replaced with Canvas data
-    let todos = [
-      { 
-        id: 1, 
-        class: "CSE 101", 
-        task: "Complete Assignment 3", 
-        dueDate: "2025-04-15", 
-        completed: false 
-      },
-      { 
-        id: 2, 
-        class: "MATH 204", 
-        task: "Study for Midterm Exam", 
-        dueDate: "2025-04-10", 
-        completed: false 
-      },
-      { 
-        id: 3, 
-        class: "PHYSICS 210", 
-        task: "Lab Report Submission", 
-        dueDate: "2025-04-08", 
-        completed: true 
-      },
-      { 
-        id: 4, 
-        class: "ENG 105", 
-        task: "Essay First Draft", 
-        dueDate: "2025-04-20", 
-        completed: false 
-      }
-    ];
+    // Replace the todos array with an empty array since we'll load from the server
+    let todos = [];
     
     // Track which tasks have been modified
     let modifiedTasks = new Set();
     
     // Initialize todo list
     function initTodoList() {
-      updateTodoList();
+      // Fetch assignments from the server
+      fetchAssignments();
       
       // Add submit button
       const submitContainer = document.createElement('div');
@@ -313,29 +285,47 @@
       document.getElementById('todo-tab').appendChild(submitContainer);
     }
     
-    // Refresh tasks - simulate pulling from Canvas API
-    function refreshTasks() {
-      // In a real implementation, this would fetch from Canvas API
-      // For now, just show a loading indicator then refresh the list
-      
+    // Fetch assignments from the backend
+    function fetchAssignments() {
       const todoList = document.getElementById('todo-list');
       todoList.innerHTML = '';
       
       const emptyState = document.getElementById('empty-state');
       emptyState.style.display = 'flex';
-      emptyState.querySelector('p').textContent = 'Refreshing tasks from Canvas...';
+      emptyState.querySelector('p').textContent = 'Loading tasks from server...';
       
-      // Simulate network delay
-      setTimeout(() => {
-        // Reset modified tasks since we're refreshing from the source
-        modifiedTasks.clear();
-        
-        // Sort tasks by due date
-        todos.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
-        
-        updateTodoList();
-        emptyState.style.display = 'none';
-      }, 1000);
+      // Fetch from the backend
+      fetch('http://localhost:8080/assignments')
+        .then(response => response.json())
+        .then(data => {
+          todos = data.map((item, index) => ({
+            id: index + 1,
+            class: item.course_name,
+            task: item.assign_name,
+            dueDate: item.due_date.split('T')[0], // Format the date
+            reward: item.money,
+            completed: false
+          }));
+          
+          // Sort tasks by due date
+          todos.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+          
+          updateTodoList();
+          emptyState.style.display = 'none';
+        })
+        .catch(error => {
+          console.error('Error fetching assignments:', error);
+          emptyState.querySelector('p').textContent = 'Error loading tasks. Please try again.';
+        });
+    }
+    
+    // Refresh tasks - now actually fetches from the backend
+    function refreshTasks() {
+      // Reset modified tasks since we're refreshing from the source
+      modifiedTasks.clear();
+      
+      // Fetch assignments
+      fetchAssignments();
     }
     
     // Toggle todo completion
@@ -445,6 +435,14 @@
           dateSpan.className = 'todo-date';
           dateSpan.textContent = `Due: ${formattedDate}`;
           
+          // Add reward information
+          const rewardSpan = document.createElement('span');
+          rewardSpan.className = 'todo-reward';
+          rewardSpan.textContent = `Reward: ${todo.reward} coins`;
+          rewardSpan.style.color = '#4CAF50';
+          rewardSpan.style.fontWeight = 'bold';
+          rewardSpan.style.marginTop = '4px';
+          
           // Check if past due
           if (new Date() > dueDate && !todo.completed) {
             dateSpan.style.fontWeight = 'bold';
@@ -453,6 +451,7 @@
           infoDiv.appendChild(classSpan);
           infoDiv.appendChild(taskSpan);
           infoDiv.appendChild(dateSpan);
+          infoDiv.appendChild(rewardSpan);
           
           li.appendChild(checkbox);
           li.appendChild(infoDiv);
@@ -499,15 +498,12 @@
     // Load Godot game
     function loadGame() {
       const gameContainer = document.getElementById('game-container');
-      gameContainer.innerHTML = ''; // Clear any existing iframe
+      gameContainer.innerHTML = '';
       
-      // Create a new iframe
       const iframe = document.createElement('iframe');
       iframe.className = 'game-iframe';
-      iframe.src = 'test/index.html'; // Update this path to your Godot game location
-      iframe.allow = 'autoplay; fullscreen';
+      iframe.src = './godot_game/index.html';  // or full path
       
-      // Add iframe to container
       gameContainer.appendChild(iframe);
     }
     
