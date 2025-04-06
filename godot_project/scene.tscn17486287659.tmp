@@ -1,0 +1,86 @@
+[gd_scene load_steps=10 format=3 uid="uid://f1r5bejoej61"]
+
+[ext_resource type="Script" uid="uid://cioyblqbrv2uj" path="res://dummy.gd" id="1_nxogm"]
+[ext_resource type="Texture2D" uid="uid://bkxv3vit8arti" path="res://gold-coin-icon-2048x2048-loznlayl.png" id="2_3253y"]
+[ext_resource type="PackedScene" uid="uid://cswtjy3mcequ3" path="res://Scenes/surface.tscn" id="3_3253y"]
+[ext_resource type="Script" uid="uid://c7dp2afa7tttc" path="res://camera_3d.gd" id="3_u3cyc"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_nxogm"]
+sky_top_color = Color(0, 0.266436, 0.622195, 1)
+sky_horizon_color = Color(0.342021, 0.42106, 0.527127, 1)
+ground_bottom_color = Color(0.100686, 0.150404, 0.218912, 1)
+ground_horizon_color = Color(0.342021, 0.42106, 0.527127, 1)
+energy_multiplier = 2.05
+
+[sub_resource type="Sky" id="Sky_3253y"]
+sky_material = SubResource("ProceduralSkyMaterial_nxogm")
+
+[sub_resource type="Environment" id="Environment_u3cyc"]
+background_mode = 2
+sky = SubResource("Sky_3253y")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_nxogm"]
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_nxogm"]
+data = PackedVector3Array(1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0, -1, 1, 0, -1)
+
+[node name="Main_Scene" type="Node3D"]
+script = ExtResource("1_nxogm")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_u3cyc")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.372158, 0.333919, 0, 0.667833, 0.744311, -0.500003, 0.644591, -0.578359, 0, 0, 0)
+light_color = Color(1, 0.8, 0.509804, 1)
+light_energy = 2.5
+shadow_enabled = true
+directional_shadow_max_distance = 1777.0
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="Control"]
+layout_mode = 0
+offset_left = 779.0
+offset_top = 14.0
+offset_right = 879.0
+offset_bottom = 49.0
+scale = Vector2(2, 2)
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Control/PanelContainer"]
+layout_mode = 2
+text = "YAY"
+tab_size = 1
+
+[node name="Gold-coin-icon-2048x2048-loznlayl" type="Sprite2D" parent="."]
+position = Vector2(1043, 47)
+scale = Vector2(0.04, 0.04)
+texture = ExtResource("2_3253y")
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.285386, 0)
+mesh = SubResource("PlaneMesh_nxogm")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("ConcavePolygonShape3D_nxogm")
+
+[node name="Surface" parent="." instance=ExtResource("3_3253y")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.38738, 0)
+skeleton = NodePath("../Area3D/MeshInstance3D")
+
+[node name="SpringArm3D" type="SpringArm3D" parent="."]
+
+[node name="Camera3D" type="Camera3D" parent="SpringArm3D"]
+transform = Transform3D(1, 0, 0, 0, 0.706588, 0.707625, 0, -0.707625, 0.706588, 0, 0.156597, 0.667408)
+current = true
+script = ExtResource("3_u3cyc")

@@ -1,0 +1,101 @@
+[gd_scene load_steps=12 format=3 uid="uid://dfwsgfokkosj6"]
+
+[ext_resource type="Script" uid="uid://mu7v2ih0orlq" path="res://camera.gd" id="1_ig7tw"]
+[ext_resource type="Texture2D" uid="uid://bkxv3vit8arti" path="res://gold-coin-icon-2048x2048-loznlayl.png" id="3_21xkr"]
+[ext_resource type="PackedScene" uid="uid://b75idprqyyk6a" path="res://Scenes/rocks.tscn" id="4_6bp64"]
+[ext_resource type="Script" uid="uid://cioyblqbrv2uj" path="res://dummy.gd" id="4_kry3j"]
+[ext_resource type="PackedScene" uid="uid://cswtjy3mcequ3" path="res://Scenes/surface.tscn" id="5_344ge"]
+[ext_resource type="PackedScene" uid="uid://03bjah3n70ep" path="res://Shaders/WindGrass/WindGrassScene.tscn" id="6_21xkr"]
+
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_jjvhh"]
+albedo_color = Color(0.392157, 0.705882, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7dm0k"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_jjvhh"]
+sky_top_color = Color(0, 0.266436, 0.622195, 1)
+sky_horizon_color = Color(0.342021, 0.42106, 0.527127, 1)
+ground_bottom_color = Color(0.100686, 0.150404, 0.218912, 1)
+ground_horizon_color = Color(0.342021, 0.42106, 0.527127, 1)
+energy_multiplier = 2.05
+
+[sub_resource type="Sky" id="Sky_3253y"]
+sky_material = SubResource("ProceduralSkyMaterial_jjvhh")
+
+[sub_resource type="Environment" id="Environment_kry3j"]
+background_mode = 2
+sky = SubResource("Sky_3253y")
+tonemap_mode = 2
+glow_enabled = true
+
+[node name="Node3D" type="Node3D"]
+script = ExtResource("1_ig7tw")
+
+[node name="SpringArm3D" type="SpringArm3D" parent="."]
+spring_length = 3.0
+
+[node name="Camera3D" type="Camera3D" parent="SpringArm3D"]
+transform = Transform3D(1, 0, 0, 0, 0.986802, 0.161931, 0, -0.161931, 0.986802, 0, 0.503459, 2.63406)
+
+[node name="Enviorment" type="Node3D" parent="."]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -0.581492, 0, -1.61713)
+
+[node name="Node3D" parent="Enviorment" instance=ExtResource("4_6bp64")]
+transform = Transform3D(0.0267796, 0, 0, 0, 0.03, 0, 0, 0, 0.0259791, 0, 0.0517313, 0)
+
+[node name="Surface" parent="." instance=ExtResource("5_344ge")]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, -0.0150096, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(3.5334, 0, 0, 0, 0.0488137, 0, 0, 0, 3.52029, 0.0289084, 0.0627465, 0.0652515)
+material_override = SubResource("ORMMaterial3D_jjvhh")
+mesh = SubResource("BoxMesh_7dm0k")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_kry3j")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.0712912, -0.424737, -0.896715, 0.918023, -0.312879, 0.221183, -0.376474, -0.843378, 0.369543, 0, 0.154822, 0)
+light_color = Color(0.793772, 0.460233, 7.70092e-07, 1)
+light_energy = 6.1
+light_indirect_energy = 2.922
+light_volumetric_fog_energy = 3.48
+light_bake_mode = 1
+
+[node name="Reactahh" type="Node3D" parent="."]
+script = ExtResource("4_kry3j")
+
+[node name="PanelContainer" type="PanelContainer" parent="Reactahh"]
+offset_left = 779.0
+offset_top = 14.0
+offset_right = 879.0
+offset_bottom = 49.0
+scale = Vector2(2, 2)
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Reactahh/PanelContainer"]
+layout_mode = 2
+text = "YAY"
+tab_size = 1
+
+[node name="Gold-coin-icon-2048x2048-loznlayl" type="Sprite2D" parent="Reactahh/PanelContainer"]
+position = Vector2(124, 17.5)
+scale = Vector2(0.0159815, 0.0153613)
+texture = ExtResource("3_21xkr")
+
+[node name="WindGrass" parent="." instance=ExtResource("6_21xkr")]
+transform = Transform3D(0.0875031, 0, 0, 0, 0.0551519, 0, 0, 0, 0.0684555, 0.792727, 0.0943069, -1.03627)
+
+[node name="WindGrass2" parent="." instance=ExtResource("6_21xkr")]
+transform = Transform3D(0.0875031, 0, 0, 0, 0.0551519, 0, 0, 0, 0.0684555, -0.686973, 0.0943069, -1.03627)
+
+[node name="WindGrass3" parent="." instance=ExtResource("6_21xkr")]
+transform = Transform3D(0.0875031, 0, 0, 0, 0.0551519, 0, 0, 0, 0.0684555, -0.686973, 0.0943069, 1.12599)
+
+[node name="WindGrass4" parent="." instance=ExtResource("6_21xkr")]
+transform = Transform3D(0.0875031, 0, 0, 0, 0.0551519, 0, 0, 0, 0.0684555, 0.908252, 0.0943069, 1.15553)
+
+[node name="WindGrass5" parent="." instance=ExtResource("6_21xkr")]
+transform = Transform3D(0.0875031, 0, 0, 0, 0.0551519, 0, 0, 0, 0.0684555, 0.908252, 0.0943069, -0.0571197)
+
+[node name="WindGrass6" parent="." instance=ExtResource("6_21xkr")]
+transform = Transform3D(0.0875031, 0, 0, 0, 0.0551519, 0, 0, 0, 0.0684555, -0.840228, 0.0943069, -0.0571197)

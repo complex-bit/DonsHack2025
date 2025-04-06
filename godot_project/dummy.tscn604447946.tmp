@@ -1,0 +1,35 @@
+[gd_scene load_steps=2 format=3 uid="uid://f1r5bejoej61"]
+
+[ext_resource type="Script" uid="uid://ccq3vdrpbogic" path="res://rich_text_label.gd" id="1_gtj52"]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Control"]
+layout_mode = 2
+offset_left = 750.0
+offset_top = 1.0
+offset_right = 1102.0
+offset_bottom = 645.0
+text = "0"
+script = ExtResource("1_gtj52")
+
+[node name="PanelContainer" type="PanelContainer" parent="Control"]
+layout_mode = 0
+offset_left = 56.0
+offset_top = 33.0
+offset_right = 427.0
+offset_bottom = 161.0
+
+[node name="Button" type="Button" parent="Control/PanelContainer"]
+layout_mode = 2
+text = "add"
+
+[connection signal="button_down" from="Control/PanelContainer/Button" to="Control/RichTextLabel" method="_on_button_button_down"]
