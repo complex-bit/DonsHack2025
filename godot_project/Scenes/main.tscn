@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dfwsgfokkosj6"]
+[gd_scene load_steps=11 format=3 uid="uid://dfwsgfokkosj6"]
 
 [ext_resource type="Script" uid="uid://mu7v2ih0orlq" path="res://camera.gd" id="1_ig7tw"]
 [ext_resource type="Texture2D" uid="uid://bkxv3vit8arti" path="res://gold-coin-icon-2048x2048-loznlayl.png" id="3_21xkr"]
@@ -6,11 +6,7 @@
 [ext_resource type="Script" uid="uid://cioyblqbrv2uj" path="res://dummy.gd" id="4_kry3j"]
 [ext_resource type="PackedScene" uid="uid://cswtjy3mcequ3" path="res://Scenes/surface.tscn" id="5_344ge"]
 [ext_resource type="PackedScene" uid="uid://03bjah3n70ep" path="res://Shaders/WindGrass/WindGrassScene.tscn" id="6_21xkr"]
-
-[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_jjvhh"]
-albedo_color = Color(0.392157, 0.705882, 0, 1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_7dm0k"]
+[ext_resource type="PackedScene" uid="uid://nxsddqoryyw4" path="res://Scenes/play_area.tscn" id="8_344ge"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_jjvhh"]
 sky_top_color = Color(0, 0.266436, 0.622195, 1)
@@ -32,35 +28,54 @@ glow_enabled = true
 script = ExtResource("1_ig7tw")
 
 [node name="SpringArm3D" type="SpringArm3D" parent="."]
+physics_interpolation_mode = 2
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48804, 0)
 spring_length = 3.0
 
 [node name="Camera3D" type="Camera3D" parent="SpringArm3D"]
-transform = Transform3D(1, 0, 0, 0, 0.986802, 0.161931, 0, -0.161931, 0.986802, 0, 0.503459, 2.63406)
+transform = Transform3D(1, 0, 0, 0, 0.986802, 0.161931, 0, -0.161931, 0.986802, 0, 0.503459, 3.05636)
 
 [node name="Enviorment" type="Node3D" parent="."]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -0.581492, 0, -1.61713)
 
-[node name="Node3D" parent="Enviorment" instance=ExtResource("4_6bp64")]
-transform = Transform3D(0.0267796, 0, 0, 0, 0.03, 0, 0, 0, 0.0259791, 0, 0.0517313, 0)
-
-[node name="Surface" parent="." instance=ExtResource("5_344ge")]
-transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, -0.0150096, 0)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(3.5334, 0, 0, 0, 0.0488137, 0, 0, 0, 3.52029, 0.0289084, 0.0627465, 0.0652515)
-material_override = SubResource("ORMMaterial3D_jjvhh")
-mesh = SubResource("BoxMesh_7dm0k")
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Enviorment"]
 environment = SubResource("Environment_kry3j")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.0712912, -0.424737, -0.896715, 0.918023, -0.312879, 0.221183, -0.376474, -0.843378, 0.369543, 0, 0.154822, 0)
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Enviorment"]
+transform = Transform3D(-0.100456, -0.361344, -0.927006, 0.920154, -0.388144, 0.0515835, -0.378451, -0.847806, 0.371483, -0.109039, 0.00834247, 9.04799e-05)
 light_color = Color(0.793772, 0.460233, 7.70092e-07, 1)
 light_energy = 6.1
 light_indirect_energy = 2.922
 light_volumetric_fog_energy = 3.48
 light_bake_mode = 1
+
+[node name="terrain" parent="Enviorment" instance=ExtResource("4_6bp64")]
+transform = Transform3D(0.0267796, 0, 0, 0, 0.03, 0, 0, 0, 0.0259791, -2.98023e-08, 0.0517313, 0)
+
+[node name="Surface" parent="Enviorment" instance=ExtResource("5_344ge")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0.290746, -0.0308471, 0.808565)
+skeleton = NodePath("../..")
+
+[node name="Grass" type="Node3D" parent="Enviorment"]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0.290746, 0, 0.808565)
+
+[node name="WindGrass" parent="Enviorment/Grass" instance=ExtResource("6_21xkr")]
+transform = Transform3D(0.0875031, 0, 0, 0, 0.0551519, 0, 0, 0, 0.0684555, 0.792727, 0.0943069, -1.03627)
+
+[node name="WindGrass2" parent="Enviorment/Grass" instance=ExtResource("6_21xkr")]
+transform = Transform3D(0.0875031, 0, 0, 0, 0.0551519, 0, 0, 0, 0.0684555, -0.686973, 0.0943069, -1.03627)
+
+[node name="WindGrass3" parent="Enviorment/Grass" instance=ExtResource("6_21xkr")]
+transform = Transform3D(0.0875031, 0, 0, 0, 0.0551519, 0, 0, 0, 0.0684555, -0.686973, 0.0943069, 1.12599)
+
+[node name="WindGrass4" parent="Enviorment/Grass" instance=ExtResource("6_21xkr")]
+transform = Transform3D(0.0875031, 0, 0, 0, 0.0551519, 0, 0, 0, 0.0684555, 0.908252, 0.0943069, 1.15553)
+
+[node name="WindGrass5" parent="Enviorment/Grass" instance=ExtResource("6_21xkr")]
+transform = Transform3D(0.0875031, 0, 0, 0, 0.0551519, 0, 0, 0, 0.0684555, 0.908252, 0.0943069, -0.0571197)
+
+[node name="WindGrass6" parent="Enviorment/Grass" instance=ExtResource("6_21xkr")]
+transform = Transform3D(0.0875031, 0, 0, 0, 0.0551519, 0, 0, 0, 0.0684555, -0.840228, 0.0943069, -0.0571197)
 
 [node name="Reactahh" type="Node3D" parent="."]
 script = ExtResource("4_kry3j")
@@ -82,20 +97,5 @@ position = Vector2(124, 17.5)
 scale = Vector2(0.0159815, 0.0153613)
 texture = ExtResource("3_21xkr")
 
-[node name="WindGrass" parent="." instance=ExtResource("6_21xkr")]
-transform = Transform3D(0.0875031, 0, 0, 0, 0.0551519, 0, 0, 0, 0.0684555, 0.792727, 0.0943069, -1.03627)
-
-[node name="WindGrass2" parent="." instance=ExtResource("6_21xkr")]
-transform = Transform3D(0.0875031, 0, 0, 0, 0.0551519, 0, 0, 0, 0.0684555, -0.686973, 0.0943069, -1.03627)
-
-[node name="WindGrass3" parent="." instance=ExtResource("6_21xkr")]
-transform = Transform3D(0.0875031, 0, 0, 0, 0.0551519, 0, 0, 0, 0.0684555, -0.686973, 0.0943069, 1.12599)
-
-[node name="WindGrass4" parent="." instance=ExtResource("6_21xkr")]
-transform = Transform3D(0.0875031, 0, 0, 0, 0.0551519, 0, 0, 0, 0.0684555, 0.908252, 0.0943069, 1.15553)
-
-[node name="WindGrass5" parent="." instance=ExtResource("6_21xkr")]
-transform = Transform3D(0.0875031, 0, 0, 0, 0.0551519, 0, 0, 0, 0.0684555, 0.908252, 0.0943069, -0.0571197)
-
-[node name="WindGrass6" parent="." instance=ExtResource("6_21xkr")]
-transform = Transform3D(0.0875031, 0, 0, 0, 0.0551519, 0, 0, 0, 0.0684555, -0.840228, 0.0943069, -0.0571197)
+[node name="Node3D" parent="." instance=ExtResource("8_344ge")]
+transform = Transform3D(0.35, 0, 0, 0, 0.35, 0, 0, 0, 0.35, -0.0363023, -0.11943, 0.0860043)
