@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "course_name": "Automata Theory (Spring 2025)",
+    "assign_name": "Homework 8 Q1",
+    "due_date": "2025-04-08T06:59:00Z",
+    "money": 100
+  },
+  {
+    "course_name": "Real Analysis - 02 (Spring 2025)",
+    "assign_name": "Study Guide II",
+    "due_date": "2025-04-08T06:59:00Z",
+    "money": 50
+  },
+  {
+    "course_name": "Real Analysis - 02 (Spring 2025)",
+    "assign_name": "Assignment 10",
+    "due_date": "2025-04-12T06:59:00Z",
+    "money": 25
+  }
+]

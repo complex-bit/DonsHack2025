@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -36,6 +37,8 @@ type Entry struct {
 	Date_posted    string `json:"date_posted"`
 	Points         int    `json:"points"`
 	Submittable    bool   `json:"can_submit"`
+	Graded         bool   `json:"graded"`
+	Locked         bool   `json:"locked_for_user"`
 }
 
 // type CanvasAssignment struct {
@@ -54,6 +57,7 @@ type CanvasAssignment struct {
 	AssignmentGroupID int     `json:"assignment_group_id"`
 	Graded            bool    `json:"graded"`
 	Submittable       bool    `json:"can_submit"`
+	Locked            bool    `json:"locked_for_user"`
 
 	Submission *struct {
 		SubmittedAt   string `json:"submitted_at"`
@@ -100,8 +104,6 @@ func entry_processor(entries []Entry) (assignments []assignment) {
 
 	durations[0] = (float64(time_d1.UnixNano()) - float64(time_d0.UnixNano())) / 1e9
 
-	println("HELLLLOOO")
-	println(durations[0])
 	if entries[0].Is_submitted {
 		time_c0, _ := time.Parse(layout, entries[0].Date_posted)
 		time_c1, _ := time.Parse(layout, entries[0].Submitted_date)
@@ -143,9 +145,10 @@ func disjoint_assignment_process(assignments []assignment) (submitted_assignment
 	var unsubmitted []assignment
 	n := len(assignments)
 	for i := 0; i < n; i++ {
+		due_time, _ := time.Parse(time.RFC3339, assignments[i].entry.Due_date)
 		if assignments[i].entry.Is_submitted {
 			submitted = append(submitted, assignments[i])
-		} else if assignments[i].entry.Submittable {
+		} else if time.Now().Before(due_time) {
 			unsubmitted = append(unsubmitted, assignments[i])
 		} else {
 			//fmt.Println("WHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
@@ -248,7 +251,7 @@ func assignments_to_exits(assignments []assignment) (exits []Exit) {
 func Composite_processor(entries []Entry) {
 	// Process the entries through your pipeline
 	exits := assignments_to_exits(urgency_sort(entry_processor(entries)))
-	//fmt.Println(exits)
+	fmt.Println(exits)
 
 	// Marshal the slice of structs to JSON
 	jsonData, err := json.MarshalIndent(exits, "", "  ")
@@ -267,60 +270,127 @@ func Composite_processor(entries []Entry) {
 	//fmt.Println("JSON data written to entries.json")
 }
 
+func getNextPageURL(linkHeader string) string {
+	// Example Link header: <https://api.instructure.com/api/v1/courses/1/assignments?page=2>; rel="next"
+	links := strings.Split(linkHeader, ",")
+	for _, link := range links {
+		if strings.Contains(link, `rel="next"`) {
+			// Extract URL from the <...> part
+			start := strings.Index(link, "<") + 1
+			end := strings.Index(link, ">")
+			if start > 0 && end > start {
+				return link[start:end]
+			}
+		}
+	}
+	return ""
+}
+
 func getEntries(courseId string, course_name string) []Entry {
 	// Replace with your actual values
 	canvasToken := "1018~WyU77kVnVHxLmxLnMkQnPKBYAnJafrzr7XEFJXYUtG8RQDKEhJFNVCyVPhhfD77e" //os.Getenv("CANVAS_TOKEN") // or hardcode for testing
 	courseID := courseId
 	baseURL := "https://usfca.instructure.com"
-
+	var all_canvas_assign []CanvasAssignment
 	url := fmt.Sprintf("%s/api/v1/courses/%s/assignments?include[]=submission", baseURL, courseID)
 
-	// Create request
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		panic(err)
+	for {
+		req, err := http.NewRequest("GET", url, nil)
+		if err != nil {
+			return nil
+		}
+		req.Header.Set("Authorization", "Bearer "+canvasToken)
+
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			return nil
+		}
+		defer resp.Body.Close()
+
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil
+		}
+
+		// Unmarshal the assignments from the response body
+		var assign_entry []CanvasAssignment
+		err = json.Unmarshal(body, &assign_entry)
+		if err != nil {
+			return nil
+		}
+
+		// Add the assignments to the allAssignments slice
+		all_canvas_assign = append(all_canvas_assign, assign_entry...)
+
+		// Check if there's another page of assignments
+		linkHeader := resp.Header.Get("Link")
+		if linkHeader == "" {
+			break // No more pages, exit the loop
+		}
+
+		// Parse the Link header to find the next page URL
+		nextPage := getNextPageURL(linkHeader)
+		if nextPage == "" {
+			break // No "next" page, exit the loop
+		}
+
+		// Set the URL for the next request
+		url = nextPage
 	}
 
-	// Set headers
-	req.Header.Set("Authorization", "Bearer "+canvasToken)
+	// // Create request
+	// req, err := http.NewRequest("GET", url, nil)
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	// Send request
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
+	// // Set headers
+	// req.Header.Set("Authorization", "Bearer "+canvasToken)
 
-	// Read body
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		panic(err)
-	}
-	////fmt.Println(string(body))
-	// Parse JSON
-	var assign_entry []CanvasAssignment
-	err = json.Unmarshal(body, &assign_entry)
-	if err != nil {
-		panic(err)
-	}
-	//fmt.Println("HELLOOOOOOOOOOOOOOOOO")
-	//fmt.Println(assign_entry)
-	n := len(assign_entry)
+	// // Send request
+	// client := &http.Client{}
+	// resp, err := client.Do(req)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// defer resp.Body.Close()
+
+	// // Read body
+	// body, err := io.ReadAll(resp.Body)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// ////fmt.Println(string(body))
+	// // Parse JSON
+	// var assign_entry []CanvasAssignment
+	// err = json.Unmarshal(body, &assign_entry)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// //fmt.Println("HELLOOOOOOOOOOOOOOOOO")
+	// //fmt.Println(assign_entry)
+	// fmt.Println()
+	// fmt.Println()
+	// fmt.Println(assign_entry)
+	// fmt.Println()
+	// fmt.Println()
+	n := len(all_canvas_assign)
 	entries := make([]Entry, n)
 	for i := 0; i < n; i++ {
 		entries[i] = Entry{
 			Course_name:    course_name,
-			Assign_name:    assign_entry[i].Name,
-			Due_date:       assign_entry[i].DueAt,
+			Assign_name:    all_canvas_assign[i].Name,
+			Due_date:       all_canvas_assign[i].DueAt,
 			Submitted_date: "",
 			Is_submitted:   false,
-			Date_posted:    assign_entry[i].CreatedAt,
-			Points:         int(assign_entry[i].PointsPossible),
-			Submittable:    assign_entry[i].Submittable,
+			Date_posted:    all_canvas_assign[i].CreatedAt,
+			Points:         int(all_canvas_assign[i].PointsPossible),
+			Submittable:    all_canvas_assign[i].Submittable,
+			Locked:         all_canvas_assign[i].Locked,
 		}
-		if assign_entry[i].Submission.SubmittedAt != "" {
-			entries[i].Submitted_date = assign_entry[i].Submission.SubmittedAt
+		if all_canvas_assign[i].Submission.SubmittedAt != "" {
+			entries[i].Submitted_date = all_canvas_assign[i].Submission.SubmittedAt
 			entries[i].Is_submitted = true
 		}
 	}
