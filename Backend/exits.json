@@ -1,68 +1,38 @@
 [
   {
     "course_name": "Second Semester Spanish - 04 (Spring 2025)",
-    "assign_name": "Ejercicio de escritura 4",
-    "due_date": "2025-04-07T19:30:00Z",
+    "assign_name": "Exam 2",
+    "due_date": "2025-04-11T20:00:00Z",
     "money": 100
   },
   {
-    "course_name": "Automata Theory (Spring 2025)",
-    "assign_name": "Homework 8 Q1",
-    "due_date": "2025-04-08T06:59:00Z",
-    "money": 50
-  },
-  {
-    "course_name": "Foundations of Machine Learning - 01 (Spring 2025)",
-    "assign_name": "Data Challenge 1: Medical Insurance Cost Prediction",
-    "due_date": "2025-04-08T06:59:59Z",
-    "money": 25
-  },
-  {
     "course_name": "Second Semester Spanish - 04 (Spring 2025)",
-    "assign_name": "9-5B: Así se forma: El imperfecto con acciones en progreso (#2)",
-    "due_date": "2025-04-09T19:30:00Z",
-    "money": 10
+    "assign_name": "Ejercicio de escritura 4",
+    "due_date": "2025-04-07T19:30:00Z",
+    "money": 50
   },
   {
     "course_name": "Second Semester Spanish - 04 (Spring 2025)",
     "assign_name": "9-7: ¿De qué se trata?",
     "due_date": "2025-04-09T19:30:00Z",
-    "money": 5
+    "money": 25
   },
   {
     "course_name": "Data Visualization - 01 (Spring 2025)",
-    "assign_name": "Data Stories ",
-    "due_date": "2025-04-11T06:59:00Z",
-    "money": 5
-  },
-  {
-    "course_name": "Second Semester Spanish - 04 (Spring 2025)",
-    "assign_name": "Exam 2",
-    "due_date": "2025-04-11T20:00:00Z",
-    "money": 5
-  },
-  {
-    "course_name": "Data Visualization - 01 (Spring 2025)",
-    "assign_name": "Alpha Release",
-    "due_date": "2025-04-12T06:59:00Z",
-    "money": 5
-  },
-  {
-    "course_name": "Second Semester Spanish - 04 (Spring 2025)",
-    "assign_name": "Telenovela Script",
-    "due_date": "2025-04-14T19:30:00Z",
-    "money": 5
+    "assign_name": "Late Days",
+    "due_date": "2025-04-26T06:59:00Z",
+    "money": 10
   },
   {
     "course_name": "Foundations of Machine Learning - 01 (Spring 2025)",
-    "assign_name": "Final Project - Update 02",
-    "due_date": "2025-04-15T06:59:59Z",
+    "assign_name": "Data Challenge 1: Medical Insurance Cost Prediction",
+    "due_date": "2025-04-08T06:59:59Z",
     "money": 5
   },
   {
-    "course_name": "Data Visualization - 01 (Spring 2025)",
-    "assign_name": "Extra Credit - Hackathon",
-    "due_date": "2025-04-22T06:59:00Z",
+    "course_name": "Automata Theory (Spring 2025)",
+    "assign_name": "Homework 8 Q1",
+    "due_date": "2025-04-08T06:59:00Z",
     "money": 5
   },
   {
@@ -72,27 +42,27 @@
     "money": 5
   },
   {
+    "course_name": "Second Semester Spanish - 04 (Spring 2025)",
+    "assign_name": "Telenovela Script",
+    "due_date": "2025-04-14T19:30:00Z",
+    "money": 5
+  },
+  {
     "course_name": "Data Visualization - 01 (Spring 2025)",
     "assign_name": "Beta Release",
     "due_date": "2025-04-24T21:00:00Z",
     "money": 5
   },
   {
+    "course_name": "Second Semester Spanish - 04 (Spring 2025)",
+    "assign_name": "9-5B: Así se forma: El imperfecto con acciones en progreso (#2)",
+    "due_date": "2025-04-09T19:30:00Z",
+    "money": 5
+  },
+  {
     "course_name": "Data Visualization - 01 (Spring 2025)",
-    "assign_name": "Late Days",
-    "due_date": "2025-04-26T06:59:00Z",
-    "money": 5
-  },
-  {
-    "course_name": "Second Semester Spanish - 04 (Spring 2025)",
-    "assign_name": "10-6: ¿De qué se trata?",
-    "due_date": "2025-04-30T19:30:00Z",
-    "money": 5
-  },
-  {
-    "course_name": "Second Semester Spanish - 04 (Spring 2025)",
-    "assign_name": "Telenovela Video",
-    "due_date": "2025-04-30T19:30:00Z",
+    "assign_name": "Project Presentation",
+    "due_date": "2025-05-06T06:59:59Z",
     "money": 5
   },
   {
@@ -102,9 +72,39 @@
     "money": 5
   },
   {
+    "course_name": "Second Semester Spanish - 04 (Spring 2025)",
+    "assign_name": "Telenovela Video",
+    "due_date": "2025-04-30T19:30:00Z",
+    "money": 5
+  },
+  {
     "course_name": "Data Visualization - 01 (Spring 2025)",
-    "assign_name": "Project Presentation",
-    "due_date": "2025-05-06T06:59:59Z",
+    "assign_name": "Data Stories ",
+    "due_date": "2025-04-11T06:59:00Z",
+    "money": 5
+  },
+  {
+    "course_name": "Data Visualization - 01 (Spring 2025)",
+    "assign_name": "Extra Credit - Hackathon",
+    "due_date": "2025-04-22T06:59:00Z",
+    "money": 5
+  },
+  {
+    "course_name": "Second Semester Spanish - 04 (Spring 2025)",
+    "assign_name": "10-6: ¿De qué se trata?",
+    "due_date": "2025-04-30T19:30:00Z",
+    "money": 5
+  },
+  {
+    "course_name": "Data Visualization - 01 (Spring 2025)",
+    "assign_name": "Alpha Release",
+    "due_date": "2025-04-12T06:59:00Z",
+    "money": 5
+  },
+  {
+    "course_name": "Foundations of Machine Learning - 01 (Spring 2025)",
+    "assign_name": "Final Project - Update 02",
+    "due_date": "2025-04-15T06:59:59Z",
     "money": 5
   },
   {

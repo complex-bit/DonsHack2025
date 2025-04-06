@@ -60,11 +60,19 @@ func main() {
 	staticDir := filepath.Join("..", "static")
 
 	// Endpoint for test data
+	var testValue = 100 // Store the value in a variable that can be modified
+
 	http.HandleFunc("/data", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Content-Type", "application/json")
+
+		if r.Method == "POST" {
+			// Handle POST request to increment value
+			testValue += 5
+		}
+
 		data := map[string]interface{}{
-			"test": 100,
+			"test": testValue,
 		}
 		json.NewEncoder(w).Encode(data)
 	})

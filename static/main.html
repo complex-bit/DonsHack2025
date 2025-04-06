@@ -251,6 +251,10 @@
       <i>📝</i>
       <p>Loading tasks from Canvas...</p>
     </div>
+    
+    <div class="submit-container">
+      <button class="submit-button" onclick="incrementValue()">Submit Changes (+5</button>
+    </div>
   </div>
   
   <!-- Game Tab -->
@@ -271,19 +275,42 @@
     function initTodoList() {
       // Fetch assignments from the server
       fetchAssignments();
-      
-      // Add submit button
-      const submitContainer = document.createElement('div');
-      submitContainer.className = 'submit-container';
-      
-      const submitButton = document.createElement('button');
-      submitButton.className = 'submit-button';
-      submitButton.textContent = 'Submit Changes';
-      submitButton.addEventListener('click', submitChanges);
-      
-      submitContainer.appendChild(submitButton);
-      document.getElementById('todo-tab').appendChild(submitContainer);
     }
+    
+    // Function to increment the test value in the backend
+    function incrementValue() {
+    // Remove the first modified task from the list
+    const modifiedTodo = todos.find(todo => modifiedTasks.has(todo.id));
+    if (modifiedTodo) {
+      // Remove the todo from the list
+      todos = todos.filter(todo => todo.id !== modifiedTodo.id);
+      
+      // Update the task list on the UI
+      updateTodoList();
+
+      // Clear modified tasks after removal
+      modifiedTasks.clear();
+
+      // Call the backend API to increment the value
+      fetch('http://localhost:8080/data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Value incremented successfully. New value:', data.test);
+        alert(`Task removed! New value: ${data.test}`);
+      })
+      .catch(error => {
+        console.error('Error incrementing value:', error);
+        alert('Error incrementing value. Check console for details.');
+      });
+    } else {
+      alert('No modified task selected.');
+    }
+  }
     
     // Fetch assignments from the backend
     function fetchAssignments() {
@@ -344,27 +371,6 @@
       });
       
       updateTodoList();
-    }
-    
-    // Submit changes to backend
-    function submitChanges() {
-      if (modifiedTasks.size === 0) {
-        alert('No changes to submit');
-        return;
-      }
-      
-      // Get only the modified tasks
-      const changedTasks = todos.filter(todo => modifiedTasks.has(todo.id));
-      
-      // In a real implementation, this would send to your backend
-      console.log('Submitting changed tasks to backend:', changedTasks);
-      
-      // Create JSON to display what would be sent
-      const jsonData = JSON.stringify(changedTasks, null, 2);
-      alert(`Changes submitted!\n\nData sent to backend:\n${jsonData}`);
-      
-      // Clear the modified tasks set after submission
-      modifiedTasks.clear();
     }
     
     // Filter todos based on search input

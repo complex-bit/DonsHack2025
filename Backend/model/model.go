@@ -71,8 +71,8 @@ func LinearRegressionModel(x1 []float64, x2 []float64, y1 []float64) func(float6
 }
 
 func UrgencyDetermination(late_time float64, expected_time float64, grade_proportion float64) float64 {
-	tuning_factor := 0.1
-	return math.Pow(math.E, tuning_factor*(late_time+expected_time)) * grade_proportion
+	//tuning_factor := 0.1
+	return grade_proportion / math.Abs(expected_time+late_time)
 
 }
 

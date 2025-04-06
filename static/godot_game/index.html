@@ -90,28 +90,18 @@ body {
 	z-index: 1;
 }
 		</style>
-		<script> 
-function getFile(callback) {
-    // Hardcoded reference to Go endpoint
-    const jsonData = { test: 1201 }; // Default fallback value
-    
-    // Try to get data from Go
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'http://localhost:8080/data', false); // Synchronous for simplicity
-    
-    try {
-        xhr.send();
-        if (xhr.status === 200) {
-            // Got data from Go
-            callback(xhr.responseText);
-        } else {
-            // Error, use fallback
-            callback(JSON.stringify(jsonData));
-        }
-    } catch (e) {
-        // Network error, use fallback
-        callback(JSON.stringify(jsonData));
-    }
+		<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
+<link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
+<script> 
+function getFile(callback)
+{
+	window.input = document.createElement("input"); 
+	input.type = 'file';
+
+	input.onchange = e => { 
+	var file = e.target.files[0];
+	
+	}
 }
 </script> 
 
@@ -133,7 +123,7 @@ function getFile(callback) {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":46785632,"index.wasm":52106500},"focusCanvas":true,"gdextensionLibs":[]};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":63255664,"index.wasm":52106500},"focusCanvas":true,"gdextensionLibs":[]};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 

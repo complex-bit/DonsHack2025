@@ -2,12 +2,12 @@ package main
 
 import (
 	"encoding/json"
-	"fhshaik/model"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"server/model"
 	"sort"
 	"strings"
 	"time"
