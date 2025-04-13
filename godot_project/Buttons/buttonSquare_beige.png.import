@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://tkbq87qyjddl"
-path="res://.godot/imported/gold-coin-icon-2048x2048-loznlayl.png-7a37ce3c3acbcd41823d07aad7707a4f.ctex"
+uid="uid://bbr2iuhke4ecj"
+path="res://.godot/imported/buttonSquare_beige.png-83a87b9ca704309a1e7b7949bcc77174.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://gold-coin-icon-2048x2048-loznlayl.png"
-dest_files=["res://.godot/imported/gold-coin-icon-2048x2048-loznlayl.png-7a37ce3c3acbcd41823d07aad7707a4f.ctex"]
+source_file="res://Buttons/buttonSquare_beige.png"
+dest_files=["res://.godot/imported/buttonSquare_beige.png-83a87b9ca704309a1e7b7949bcc77174.ctex"]
 
 [params]
 

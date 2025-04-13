@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3 uid="uid://cx3rb1l2sg7uv"]
+
+[ext_resource type="Texture2D" uid="uid://bbr2iuhke4ecj" path="res://Buttons/buttonSquare_beige.png" id="1_12ej0"]
+[ext_resource type="Script" uid="uid://dm75vhnf558e" path="res://Scenes/slot.gd" id="2_67ou1"]
+[ext_resource type="AudioStream" uid="uid://dr5cb2g1j72n1" path="res://Audio/click_004.ogg" id="3_67ou1"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_b8hht"]
+
+[node name="Slot" type="Button"]
+texture_filter = 1
+custom_minimum_size = Vector2(50, 50)
+anchors_preset = -1
+anchor_left = 0.001
+anchor_top = 0.002
+anchor_right = 0.088
+anchor_bottom = 0.156
+offset_left = -0.152
+offset_top = -0.296
+offset_right = -0.376007
+offset_bottom = -0.0880051
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_b8hht")
+icon = ExtResource("1_12ej0")
+icon_alignment = 1
+expand_icon = true
+script = ExtResource("2_67ou1")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_67ou1")
+
+[connection signal="button_up" from="." to="." method="_on_button_up"]

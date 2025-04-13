@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://tkbq87qyjddl"
-path="res://.godot/imported/gold-coin-icon-2048x2048-loznlayl.png-7a37ce3c3acbcd41823d07aad7707a4f.ctex"
+uid="uid://vhumkw5564b2"
+path="res://.godot/imported/pink_tree.png-bd68bd8a09b2e91d3ae7cbd20b054d1c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://gold-coin-icon-2048x2048-loznlayl.png"
-dest_files=["res://.godot/imported/gold-coin-icon-2048x2048-loznlayl.png-7a37ce3c3acbcd41823d07aad7707a4f.ctex"]
+source_file="res://Icon/pink_tree.png"
+dest_files=["res://.godot/imported/pink_tree.png-bd68bd8a09b2e91d3ae7cbd20b054d1c.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://tkbq87qyjddl"
-path="res://.godot/imported/gold-coin-icon-2048x2048-loznlayl.png-7a37ce3c3acbcd41823d07aad7707a4f.ctex"
+uid="uid://kg4ka88w8wsm"
+path="res://.godot/imported/rabbit.png-03bec6f42eb5ab956d924b51265018a5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://gold-coin-icon-2048x2048-loznlayl.png"
-dest_files=["res://.godot/imported/gold-coin-icon-2048x2048-loznlayl.png-7a37ce3c3acbcd41823d07aad7707a4f.ctex"]
+source_file="res://Icon/rabbit.png"
+dest_files=["res://.godot/imported/rabbit.png-03bec6f42eb5ab956d924b51265018a5.ctex"]
 
 [params]
 

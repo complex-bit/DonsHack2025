@@ -12,8 +12,20 @@ var placement_offset = 0.5  # Higher offset for final placement to avoid sinking
 var rotation_speed = 15.0  # Degrees per scroll event
 
 # List of available building types
-var all_buildings = ["res://house_6.tscn","res://buildings/cherry_blossom.tscn"]
+var all_buildings = ["res://house_6.tscn", "res://buildings/cherry_blossom.tscn"]
 var current_building_index = 0
+
+# Define consistent scales for each building type (both preview and placement)
+var building_scales = [
+	Vector3(0.7, 0.7, 0.7),    # House scale
+	Vector3(0.04, 0.04, 0.04)  # Cherry blossom scale (for placement)
+]
+
+# Make the preview larger for visibility while keeping the placement scale small
+var preview_scales = [
+	Vector3(0.7, 0.7, 0.7),    # House preview scale (same as placement)
+	Vector3(0.03, 0.03, 0.03)  # Cherry blossom preview scale (larger for visibility)
+]
 
 # Track all placed buildings
 var placed_buildings = []
@@ -21,13 +33,38 @@ var placed_buildings = []
 # Build mode toggle
 var build_mode = true
 
+# Store the real hit position for placement (without preview offsets)
+var true_hit_position = Vector3()
+
 func model_red() -> void:
 	if model:
-		model.set("instance_shader_parameters/instance_color_01", Color("red"))
+		if current_building_index == 1:  # Cherry blossom tree
+			_set_preview_color(model, Color(1.0, 0.0, 0.0, 1.0))  # Red with full opacity
+		else:
+			# For house, use the standard approach
+			if model.get_class() == "MeshInstance3D":
+				model.set("instance_shader_parameters/instance_color_01", Color("red"))
 
 func model_blue() -> void:
 	if model:
-		model.set("instance_shader_parameters/instance_color_01", Color("blue"))
+		if current_building_index == 1:  # Cherry blossom tree
+			_set_preview_color(model, Color(0.0, 0.5, 1.0, 1.0))  # Blue with full opacity
+		else:
+			# For house, use the standard approach
+			if model.get_class() == "MeshInstance3D":
+				model.set("instance_shader_parameters/instance_color_01", Color("blue"))
+
+# Helper function to set color on all preview materials
+func _set_preview_color(node: Node, color: Color) -> void:
+	if node is MeshInstance3D:
+		for i in range(node.get_surface_override_material_count()):
+			var mat = node.get_surface_override_material(i)
+			if mat and mat is ShaderMaterial:
+				mat.set_shader_parameter("instance_color_01", color)
+	
+	# Apply to all children recursively
+	for child in node.get_children():
+		_set_preview_color(child, color)
 	
 func enable_area() -> void:
 	if area_colshape:
@@ -132,12 +169,18 @@ func placement_check() -> bool:
 			aabb = aabb.expand(point * 0.7)  # Scale points by 70%
 		bounds = aabb.size * 0.35
 	
+	# For trees we need to use a point slightly above the ground
+	var check_position = global_position
+	if current_building_index == 1:  # Cherry blossom
+		# Use the true hit position for checking ground placement
+		check_position = true_hit_position
+	
 	# Define the four corner points
 	var points_to_check: Array = [
-		area_colshape.global_position + Vector3(bounds.x, -bounds.y, bounds.z),
-		area_colshape.global_position + Vector3(bounds.x, -bounds.y, -bounds.z),
-		area_colshape.global_position + Vector3(-bounds.x, -bounds.y, -bounds.z),
-		area_colshape.global_position + Vector3(-bounds.x, -bounds.y, bounds.z)
+		Vector3(check_position.x + bounds.x, check_position.y - bounds.y, check_position.z + bounds.z),
+		Vector3(check_position.x + bounds.x, check_position.y - bounds.y, check_position.z - bounds.z),
+		Vector3(check_position.x - bounds.x, check_position.y - bounds.y, check_position.z - bounds.z),
+		Vector3(check_position.x - bounds.x, check_position.y - bounds.y, check_position.z + bounds.z)
 	]
 	
 	var valid_ground_points = 0
@@ -183,23 +226,24 @@ func follow_mouse() -> void:
 	if result and "position" in result:
 		var hit_position = result.position
 		
-		# Apply the ground offset to raise it slightly (houses only)
+		# Store the true hit position for placement (don't modify this for preview offset)
+		true_hit_position = hit_position
+		
+		# Apply appropriate height offset based on building type
 		if current_building_index == 0:  # House
 			hit_position.y += ground_offset
 		elif current_building_index == 1:  # Cherry blossom
-			# No extra height offset for trees
-			pass
+			# Slightly raise preview above ground
+			hit_position.y -= 0.3
 		
 		global_position = hit_position
 		
-		# Make sure the scale is correct based on building type
+		# Update the model scale based on building type
 		if model:
-			if current_building_index == 0:  # House
-				if not model.scale.is_equal_approx(Vector3(0.7, 0.7, 0.7)):
-					model.scale = Vector3(0.7, 0.7, 0.7)
-			elif current_building_index == 1:  # Cherry blossom
-				if not model.scale.is_equal_approx(Vector3(0.08, 0.08, 0.08)):
-					model.scale = Vector3(0.08, 0.08, 0.08)
+			# Use the defined preview scale for the current building type
+			var current_scale = preview_scales[current_building_index]
+			if not model.scale.is_equal_approx(current_scale):
+				model.scale = current_scale
 					
 func find_building_under_cursor() -> Node3D:
 	# Get the mouse position in the viewport
@@ -344,7 +388,7 @@ func _ready() -> void:
 	# Check if required nodes exist
 	if !model:
 		print("ERROR: building_preview node not found")
-		model = MeshInstance3D.new()
+		model = Node3D.new()  # Changed to Node3D to act as a container
 		add_child(model)
 	
 	if !area:
@@ -362,38 +406,134 @@ func _ready() -> void:
 	# Make sure the model starts as red (invalid placement)
 	model_red()
 	
-	# Scale down the model
-	if model:
-		model.scale = Vector3(0.7, 0.7, 0.7)
-	
 	# Load the first building model
 	update_preview_model()
 	
 	print("Building preview ready")
 
+# Modified update_preview_model function to preserve leaf transparency
 func update_preview_model():
 	# Clear existing model if any
-	if model and model.mesh:
-		model.mesh = null
+	if model:
+		# Remove any existing children
+		for child in model.get_children():
+			child.queue_free()
+		
+		if model.mesh:
+			model.mesh = null
 	
 	# Load the selected building
 	var building_scene = load(all_buildings[current_building_index])
-	if building_scene and model:
+	if building_scene:
 		var temp_instance = building_scene.instantiate()
 		
-		# Find the mesh in the loaded scene
-		var mesh_instance = find_mesh_instance(temp_instance)
-		if mesh_instance and mesh_instance.mesh:
-			model.mesh = mesh_instance.mesh
-		
-		# Apply appropriate scale based on building type
-		if current_building_index == 0:  # House
-			model.scale = Vector3(0.7, 0.7, 0.7)
-		elif current_building_index == 1:  # Cherry blossom
-			model.scale = Vector3(1, 1, 1)  # Match smaller scale for preview
+		if current_building_index == 1:  # Cherry blossom - special handling for leaves
+			# For cherry blossom, we'll use the whole scene instance as preview
+			# instead of just the mesh
+			
+			# Make a clone of the tree for preview
+			var tree_preview = building_scene.instantiate()
+			
+			# Add it as a child of our model node
+			model.add_child(tree_preview)
+			
+			# Apply the preview scale to our model
+			model.scale = preview_scales[current_building_index]
+			
+			# Make the tree preview itself have scale 1,1,1 since the parent has the scale
+			tree_preview.scale = Vector3(1, 1, 1)
+			
+			# Instead of replacing materials, duplicate them and modify the duplicates
+			_prepare_preview_materials(tree_preview)
+			
+			# Set initial color (red by default)
+			model_red()
+		else:
+			# For other models (like houses), use the old approach
+			var mesh_instance = find_mesh_instance(temp_instance)
+			if mesh_instance and mesh_instance.mesh:
+				model.mesh = mesh_instance.mesh
+				
+				# Apply appropriate scale based on building type
+				model.scale = preview_scales[current_building_index]
 		
 		# Clean up temporary instance
 		temp_instance.queue_free()
+
+# New function to prepare the materials for preview without losing original properties
+func _prepare_preview_materials(node: Node) -> void:
+	if node is MeshInstance3D and node.mesh:
+		for surface_idx in range(node.mesh.get_surface_count()):
+			var original_material = node.mesh.surface_get_material(surface_idx)
+			if original_material:
+				# Try to detect if this is a leaf material
+				var is_leaf = false
+				if original_material is StandardMaterial3D:
+					# Leaves typically have alpha transparency or alpha scissor enabled
+					is_leaf = original_material.transparency == StandardMaterial3D.TRANSPARENCY_ALPHA || original_material.transparency == StandardMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+				
+				# Create different shader based on material type
+				var preview_shader = Shader.new()
+				
+				if is_leaf:
+					# Enhanced shader for leaves that preserves their appearance
+					preview_shader.code = """
+					shader_type spatial;
+					render_mode blend_mix, cull_disabled, depth_prepass_alpha, unshaded;
+					
+					uniform vec4 instance_color_01 : source_color;
+					uniform sampler2D texture_albedo : source_color, filter_linear_mipmap, repeat_enable;
+					
+					void fragment() {
+						vec4 albedo_tex = texture(texture_albedo, UV);
+						
+						// Preserve the original alpha from the texture
+						float alpha = albedo_tex.a;
+						
+						// Blend the instance color with the texture's alpha
+						ALBEDO = instance_color_01.rgb;
+						ALPHA = alpha * instance_color_01.a;
+					}
+					"""
+					
+					# Create a new material with our shader
+					var preview_material = ShaderMaterial.new()
+					preview_material.shader = preview_shader
+					
+					# Try to get the albedo texture from the original material
+					if original_material is StandardMaterial3D and original_material.albedo_texture:
+						preview_material.set_shader_parameter("texture_albedo", original_material.albedo_texture)
+					
+					# Set initial color (will be updated by model_red/blue)
+					preview_material.set_shader_parameter("instance_color_01", Color(1.0, 0.0, 0.0, 0.7))
+					
+					# Apply the preview material to this surface
+					node.set_surface_override_material(surface_idx, preview_material)
+				else:
+					# Standard preview shader for non-leaf parts
+					preview_shader.code = """
+					shader_type spatial;
+					render_mode blend_mix, diffuse_toon, specular_disabled, shadows_disabled, ambient_light_disabled;
+					
+					uniform vec4 instance_color_01 : source_color; 
+					
+					void fragment() {
+						ALBEDO = instance_color_01.rgb; 
+						ALPHA = instance_color_01.a; 
+					}
+					"""
+					
+					# Create a new material with our shader
+					var preview_material = ShaderMaterial.new()
+					preview_material.shader = preview_shader
+					preview_material.set_shader_parameter("instance_color_01", Color(1.0, 0.0, 0.0, 1.0))
+					
+					# Apply the preview material to this surface
+					node.set_surface_override_material(surface_idx, preview_material)
+	
+	# Process all children recursively
+	for child in node.get_children():
+		_prepare_preview_materials(child)
 
 func find_mesh_instance(node):
 	# Recursively find the first MeshInstance3D
@@ -466,29 +606,47 @@ func _input(event: InputEvent) -> void:
 			elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN and event.pressed:
 				# Rotate counterclockwise around Y axis
 				rotate_y(deg_to_rad(rotation_speed))
+
 func place_building() -> void:
-	# Get the current position
-	var placement_position = global_position
-	
 	# Get ground top position
 	var ground_y = ground_placements.global_position.y
 	var ground_top = ground_y + (ground_placements.scale.y / 2) if ground_placements is CSGBox3D else ground_y
 	
-	# Set scale and height based on building type
-	var building_scale = Vector3(0.7, 0.7, 0.7)  # Default scale
+	# Start with the true position from the raycast
+	var placement_position = true_hit_position
 	
+	# Adjust height based on building type
 	if current_building_index == 0:  # House
 		# Houses raised above ground
 		placement_position.y = ground_top + placement_offset
 	elif current_building_index == 1:  # Cherry blossom tree
-		# Make tree smaller and place it slightly into the ground
-		building_scale = Vector3(0.02, 0.02, 0.02)  # 40% of original size
-		placement_position.y = ground_top +0.1 # Slightly into the ground
+		# Place tree directly on the ground
+		placement_position.y = ground_top + 0.1  # Small offset to avoid z-fighting
+	
+	# Handle preview visibility - without await
+	if model and model.get_children().size() > 0:
+		for child in model.get_children():
+			if child != null and is_instance_valid(child):
+				child.visible = false
+		
+		# Use a timer to show preview again after a small delay
+		var timer = Timer.new()
+		add_child(timer)
+		timer.wait_time = 0.1
+		timer.one_shot = true
+		timer.timeout.connect(func():
+			if model:
+				for child in model.get_children():
+					if child != null and is_instance_valid(child):
+						child.visible = true
+			timer.queue_free()
+		)
+		timer.start()
 	
 	# Load the building from our list
 	var building_scene = load(all_buildings[current_building_index])
 	if building_scene:
-		var building = building_scene.instantiate()
+		var new_building = building_scene.instantiate()
 		
 		# Create a new transform that combines our rotation with the new position
 		var new_transform = Transform3D(
@@ -497,23 +655,23 @@ func place_building() -> void:
 		)
 		
 		# Apply the transform to the new building
-		building.global_transform = new_transform
+		new_building.global_transform = new_transform
 		
-		# Apply the appropriate scale
-		building.scale = building_scale
+		# Apply the appropriate scale from our placement scale array
+		new_building.scale = building_scales[current_building_index]
 		
 		# Add the building to the scene
-		get_parent().add_child(building)
+		get_parent().add_child(new_building)
 		
 		# Keep track of placed buildings
-		placed_buildings.append(building)
+		placed_buildings.append(new_building)
 		
 		# Store the building type index with the building
-		if building.get_meta_list().find("building_type") == -1:
-			building.set_meta("building_type", current_building_index)
+		if new_building.get_meta_list().find("building_type") == -1:
+			new_building.set_meta("building_type", current_building_index)
 		
 		# Store the scale with the building
-		building.set_meta("custom_scale", building_scale)
+		new_building.set_meta("custom_scale", building_scales[current_building_index])
 		
 		# Request navigation rebake if ground_placements has the method
 		if ground_placements and ground_placements.has_method("request_rebake"):
@@ -522,6 +680,7 @@ func place_building() -> void:
 		print("Building placed at height: " + str(placement_position.y) + 
 			  " with rotation: " + str(rotation_degrees) + 
 			  " (Type: " + str(current_building_index) + ")")
+
 func save_building_data():
 	# Call the save function on the game_state node
 	if game_state and game_state.has_method("save_game"):
@@ -575,7 +734,7 @@ func load_building_data():
 				# Load the building scene
 				var building_scene = load(all_buildings[building_type_index])
 				if building_scene:
-					var building = building_scene.instantiate()
+					var new_building = building_scene.instantiate()
 					
 					# Set position
 					var position = Vector3(
@@ -599,21 +758,17 @@ func load_building_data():
 					)
 					
 					# Apply transform
-					building.global_position = position
-					building.rotation = rotation_vec
-					building.scale = scale_vec
+					new_building.global_position = position
+					new_building.rotation = rotation_vec
+					new_building.scale = scale_vec
 					
 					# Store the building type index with the building
-					building.set_meta("building_type", building_type_index)
+					new_building.set_meta("building_type", building_type_index)
 					
 					# Add to scene
-					get_parent().add_child(building)
+					get_parent().add_child(new_building)
 					
 					# Track the building
-					placed_buildings.append(building)
+					placed_buildings.append(new_building)
 			
-			# Request navigation rebake after loading all buildings
-			if ground_placements and ground_placements.has_method("request_rebake"):
-				ground_placements.request_rebake()
-				
-			print("Loaded " + str(building_data.size()) + " buildings")
+			# Request navigation rebake after loading

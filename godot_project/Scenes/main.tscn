@@ -1,9 +1,9 @@
-[gd_scene load_steps=29 format=4 uid="uid://dfwsgfokkosj6"]
+[gd_scene load_steps=31 format=4 uid="uid://dfwsgfokkosj6"]
 
 [ext_resource type="Script" uid="uid://mu7v2ih0orlq" path="res://camera.gd" id="1_ig7tw"]
 [ext_resource type="Shader" uid="uid://datac2nii0eh6" path="res://Shaders/pixel.gdshader" id="2_344ge"]
 [ext_resource type="Script" uid="uid://dnjv6jwg6m1yk" path="res://Scenes/color_rect.gd" id="3_6iyac"]
-[ext_resource type="Texture2D" uid="uid://bkxv3vit8arti" path="res://gold-coin-icon-2048x2048-loznlayl.png" id="3_21xkr"]
+[ext_resource type="Texture2D" uid="uid://tkbq87qyjddl" path="res://gold-coin-icon-2048x2048-loznlayl.png" id="3_21xkr"]
 [ext_resource type="PackedScene" uid="uid://b75idprqyyk6a" path="res://Scenes/rocks.tscn" id="4_6bp64"]
 [ext_resource type="Script" uid="uid://cioyblqbrv2uj" path="res://dummy.gd" id="4_kry3j"]
 [ext_resource type="PackedScene" uid="uid://cswtjy3mcequ3" path="res://Scenes/surface.tscn" id="5_344ge"]
@@ -12,6 +12,8 @@
 [ext_resource type="Script" uid="uid://b0ku7srj805rr" path="res://Scenes/buidling_placer.gd" id="9_hptm8"]
 [ext_resource type="Shader" uid="uid://saqxn3nyq677" path="res://Scenes/building_placer.gdshader" id="9_ynf5e"]
 [ext_resource type="Script" uid="uid://vvsurc621nfb" path="res://Scenes/game_state.gd" id="11_d1ilt"]
+[ext_resource type="PackedScene" uid="uid://j0m56uunnxj" path="res://Scenes/bar.tscn" id="13_fdnlq"]
+[ext_resource type="Texture2D" uid="uid://b8f6vd1uvxxbd" path="res://Buttons/buttonLong_brown.png" id="14_jkdf5"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ynf5e"]
 shader = ExtResource("2_344ge")
@@ -228,6 +230,10 @@ material = SubResource("ShaderMaterial_ynf5e")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -182.0
+offset_top = -153.0
+offset_right = 424.0
+offset_bottom = 243.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("3_6iyac")
@@ -286,10 +292,10 @@ transform = Transform3D(0.0875031, 0, 0, 0, 0.0551519, 0, 0, 0, 0.0684555, -0.84
 script = ExtResource("4_kry3j")
 
 [node name="PanelContainer" type="PanelContainer" parent="SubViewportContainer/SubViewport/Reactahh"]
-offset_left = 368.0
-offset_top = 8.5
-offset_right = 458.0
-offset_bottom = 33.5
+offset_left = 378.0
+offset_top = 17.0
+offset_right = 468.0
+offset_bottom = 42.0
 scale = Vector2(1.5, 1.5)
 
 [node name="RichTextLabel" type="RichTextLabel" parent="SubViewportContainer/SubViewport/Reactahh/PanelContainer"]
@@ -304,6 +310,7 @@ texture = ExtResource("3_21xkr")
 
 [node name="ground_placements" parent="SubViewportContainer/SubViewport" instance=ExtResource("8_344ge")]
 transform = Transform3D(0.35, 0, 0, 0, 0.35, 0, 0, 0, 0.35, -0.0363023, -0.11943, 0.0860043)
+script = null
 
 [node name="Buidling_Placer" type="Node3D" parent="SubViewportContainer/SubViewport"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.436799, 0.777054)
@@ -338,3 +345,38 @@ shape = SubResource("ConvexPolygonShape3D_hptm8")
 
 [node name="game_state" type="Node3D" parent="SubViewportContainer/SubViewport"]
 script = ExtResource("11_d1ilt")
+
+[node name="PanelContainer" type="PanelContainer" parent="SubViewportContainer/SubViewport"]
+offset_left = 0.5
+offset_top = 228.0
+offset_right = 40.5
+offset_bottom = 268.0
+scale = Vector2(5.0385, 3.24702)
+
+[node name="Ui" parent="SubViewportContainer/SubViewport" instance=ExtResource("13_fdnlq")]
+offset_left = 49.5
+offset_top = 225.5
+offset_right = -476.5
+offset_bottom = -48.5
+scale = Vector2(1.74177, 2.43204)
+
+[node name="TextureRect2" type="TextureRect" parent="SubViewportContainer/SubViewport/Ui"]
+top_level = true
+z_index = -1
+texture_filter = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.489
+anchor_top = 0.671
+anchor_right = 0.489
+anchor_bottom = 0.671
+offset_left = -276.164
+offset_top = 71.096
+offset_right = 413.836
+offset_bottom = 179.096
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.399482, 0.208433)
+texture = ExtResource("14_jkdf5")
+expand_mode = 1
+stretch_mode = 4
