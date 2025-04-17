@@ -1,0 +1,116 @@
+[
+  {
+    "course_name": "Data Visualization - 01 (Spring 2025)",
+    "assign_name": "Late Days",
+    "due_date": "2025-04-26T06:59:00Z",
+    "money": 100
+  },
+  {
+    "course_name": "Data Visualization - 01 (Spring 2025)",
+    "assign_name": "Beta Release",
+    "due_date": "2025-04-24T21:00:00Z",
+    "money": 50
+  },
+  {
+    "course_name": "Automata Theory (Spring 2025)",
+    "assign_name": "Homework 10 Q1",
+    "due_date": "2025-04-23T06:59:59Z",
+    "money": 25
+  },
+  {
+    "course_name": "Senior Team Project - 02 (Spring 2025)",
+    "assign_name": "Final Poster",
+    "due_date": "2025-05-09T20:00:00Z",
+    "money": 10
+  },
+  {
+    "course_name": "Data Visualization - 01 (Spring 2025)",
+    "assign_name": "Extra Credit - Hackathon",
+    "due_date": "2025-04-22T06:59:00Z",
+    "money": 5
+  },
+  {
+    "course_name": "Data Visualization - 01 (Spring 2025)",
+    "assign_name": "Data Stories ",
+    "due_date": "2025-04-18T06:59:00Z",
+    "money": 5
+  },
+  {
+    "course_name": "Data Visualization - 01 (Spring 2025)",
+    "assign_name": "Project Presentation",
+    "due_date": "2025-05-06T06:59:59Z",
+    "money": 5
+  },
+  {
+    "course_name": "Senior Team Project - 02 (Spring 2025)",
+    "assign_name": "Weekly Scrum 8 - Wrapping-up",
+    "due_date": "2025-04-17T23:00:00Z",
+    "money": 5
+  },
+  {
+    "course_name": "Foundations of Machine Learning - 01 (Spring 2025)",
+    "assign_name": "Final Project - Update 04",
+    "due_date": "2025-05-09T06:59:59Z",
+    "money": 5
+  },
+  {
+    "course_name": "Foundations of Machine Learning - 01 (Spring 2025)",
+    "assign_name": "Research Paper Presentation - Part 2 (CS 663 Only)",
+    "due_date": "2025-04-22T06:59:59Z",
+    "money": 5
+  },
+  {
+    "course_name": "Data Visualization - 01 (Spring 2025)",
+    "assign_name": "Final Submission",
+    "due_date": "2025-05-15T06:59:59Z",
+    "money": 5
+  },
+  {
+    "course_name": "Second Semester Spanish - 04 (Spring 2025)",
+    "assign_name": "Final Exam",
+    "due_date": "2025-05-14T19:30:00Z",
+    "money": 5
+  },
+  {
+    "course_name": "Senior Team Project - 02 (Spring 2025)",
+    "assign_name": "Final Deliverable",
+    "due_date": "2025-05-12T23:00:00Z",
+    "money": 5
+  },
+  {
+    "course_name": "Second Semester Spanish - 04 (Spring 2025)",
+    "assign_name": "10-6: ¿De qué se trata?",
+    "due_date": "2025-04-30T19:30:00Z",
+    "money": 5
+  },
+  {
+    "course_name": "Second Semester Spanish - 04 (Spring 2025)",
+    "assign_name": "Oral Exam 2",
+    "due_date": "2025-05-05T20:00:00Z",
+    "money": 5
+  },
+  {
+    "course_name": "Data Visualization - 01 (Spring 2025)",
+    "assign_name": "Project Report Draft",
+    "due_date": "2025-05-11T06:59:59Z",
+    "money": 5
+  },
+  {
+    "course_name": "Foundations of Machine Learning - 01 (Spring 2025)",
+    "assign_name": "Final Project - Update 03",
+    "due_date": "2025-04-29T06:59:59Z",
+    "money": 5
+  },
+  {
+    "course_name": "Second Semester Spanish - 04 (Spring 2025)",
+    "assign_name": "Telenovela Video",
+    "due_date": "2025-04-30T19:30:00Z",
+    "money": 5
+  },
+  {
+    "course_name": "Data Visualization - 01 (Spring 2025)",
+    "assign_name": "Extra Credit - Department Events ",
+    "due_date": "2025-05-17T06:59:00Z",
+    "money": 5
+  }
+]
