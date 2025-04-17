@@ -14,21 +14,27 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            background-image: linear-gradient(45deg, #4CAF50, #81C784);
         }
         .login-container {
             background-color: white;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             padding: 30px;
             width: 350px;
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .logo {
             text-align: center;
             margin-bottom: 20px;
-            color: #0055a2; /* Canvas-like blue */
+            color: #388e3c;
         }
         h1 {
-            font-size: 24px;
+            font-size: 28px;
             margin-bottom: 5px;
         }
         .subtitle {
@@ -47,25 +53,32 @@
         input[type="text"],
         input[type="password"] {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #ddd;
             border-radius: 4px;
             box-sizing: border-box;
             font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #4CAF50;
+            outline: none;
         }
         button {
-            background-color: #0055a2; /* Canvas-like blue */
+            background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 4px;
             padding: 12px;
             width: 100%;
-            font-size: 14px;
+            font-size: 16px;
             cursor: pointer;
             transition: background-color 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         button:hover {
-            background-color: #003d7a;
+            background-color: #388e3c;
         }
         .api-help {
             font-size: 12px;
@@ -78,13 +91,28 @@
             margin-top: 20px;
             display: none;
         }
+        .game-info {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .game-info h3 {
+            color: #388e3c;
+            margin-bottom: 10px;
+        }
+        .game-info p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
         <div class="logo">
-            <h1>Canvas Assignment Manager</h1>
-            <div class="subtitle">Prioritize your assignments efficiently</div>
+            <h1>Dreamville</h1>
+            <div class="subtitle">Manage your Canvas assignments and earn rewards</div>
         </div>
         
         <form id="login-form" action="/login" method="post">
@@ -101,15 +129,20 @@
                 </div>
             </div>
             
-            <button type="submit">Log In</button>
+            <button type="submit">Enter Dreamville</button>
             
             <div id="error-message" class="error-message"></div>
         </form>
+        
+        <div class="game-info">
+            <h3>Welcome to Your Quest</h3>
+            <p>Complete assignments to earn coins that you can spend in the game. Your progress and coins are saved between sessions!</p>
+        </div>
     </div>
 
     <script>
         document.getElementById('login-form').addEventListener('submit', function(event) {
-            // Add any client-side validation here if needed
+            // Add client-side validation
             const username = document.getElementById('username').value;
             const apiKey = document.getElementById('api_key').value;
             

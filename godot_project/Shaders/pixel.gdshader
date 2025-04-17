@@ -1,6 +1,6 @@
 shader_type canvas_item;
 uniform float scanline_intensity : hint_range(0.0, 1.0) = 0.01;//0.3;
-uniform float color_bleed_weight : hint_range(0.0, 1.0) = 0.01;//0.35;
+uniform float color_bleed_weight : hint_range(0.0, 1.0) = 0.35;//0.35;
 uniform sampler2D screen_texture : hint_screen_texture, filter_nearest;
 
 void fragment() {

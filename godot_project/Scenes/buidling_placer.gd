@@ -10,7 +10,7 @@ var max_distance_threshold = 0.5  # Maximum distance from ground to consider val
 var ground_offset = 0.1  # Height offset for preview
 var placement_offset = 0.5  # Higher offset for final placement to avoid sinking
 var rotation_speed = 15.0  # Degrees per scroll event
-
+var last_building_type = 0  
 # List of available building types
 var all_buildings = ["res://house_6.tscn", "res://buildings/cherry_blossom.tscn"]
 var current_building_index = 0
@@ -18,13 +18,13 @@ var current_building_index = 0
 # Define consistent scales for each building type (both preview and placement)
 var building_scales = [
 	Vector3(0.7, 0.7, 0.7),    # House scale
-	Vector3(0.04, 0.04, 0.04)  # Cherry blossom scale (for placement)
+	Vector3(0.02, 0.02, 0.02)  # Cherry blossom scale (for placement)
 ]
 
 # Make the preview larger for visibility while keeping the placement scale small
 var preview_scales = [
 	Vector3(0.7, 0.7, 0.7),    # House preview scale (same as placement)
-	Vector3(0.03, 0.03, 0.03)  # Cherry blossom preview scale (larger for visibility)
+	Vector3(0.02, 0.02, 0.02)  # Cherry blossom preview scale (larger for visibility)
 ]
 
 # Track all placed buildings
@@ -198,10 +198,21 @@ func placement_check() -> bool:
 		return true
 	
 	return false
-
+func is_mouse_over_ui() -> bool:
+	# Get the mouse position in the viewport
+	var mouse_pos = get_viewport().get_mouse_position()
+	
+	# Check specifically if the ColorRect is under the mouse
+	var color_rect = $"../TextureRect2"
+	if color_rect and color_rect is Control and color_rect.visible:
+		# Check if the mouse position is within the ColorRect's bounds
+		return color_rect.get_global_rect().has_point(mouse_pos)
+	
+	return false
+	
 func follow_mouse() -> void:
 	# Skip if build mode is disabled
-	if not build_mode:
+	if not build_mode or is_mouse_over_ui():
 		return
 		
 	# Get the mouse position in the viewport
@@ -556,6 +567,9 @@ func _process(delta: float) -> void:
 		# Check placement validity less frequently
 		if Engine.get_frames_drawn() % 10 == 0:
 			placement_check()
+	if UiManager.current_building != last_building_type:
+		change_building_type(UiManager.current_building)
+		last_building_type = UiManager.current_building
 	
 func _input(event: InputEvent) -> void:
 	# Handle keyboard input 
@@ -589,6 +603,8 @@ func _input(event: InputEvent) -> void:
 	# Only process these inputs in build mode
 	if build_mode:
 		# Handle mouse button for placement
+		if is_mouse_over_ui():
+			return
 		if event is InputEventMouseButton:
 			if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 				var can_place = placement_check()

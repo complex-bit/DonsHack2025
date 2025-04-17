@@ -1,10 +1,10 @@
 [gd_scene load_steps=6 format=3 uid="uid://j0m56uunnxj"]
 
+[ext_resource type="Script" uid="uid://bcjhv8ofq0i2c" path="res://Scenes/Global_Bar.gd" id="1_n8sa8"]
 [ext_resource type="Texture2D" uid="uid://b8f6vd1uvxxbd" path="res://Buttons/buttonLong_brown.png" id="1_uypo1"]
-[ext_resource type="PackedScene" path="res://Scenes/slot.tscn" id="1_vwav4"]
+[ext_resource type="PackedScene" uid="uid://cx3rb1l2sg7uv" path="res://Scenes/slot.tscn" id="1_vwav4"]
 [ext_resource type="Texture2D" uid="uid://bmeivq5dcvlir" path="res://Icon/idk.png" id="3_xgyi3"]
 [ext_resource type="Texture2D" uid="uid://vhumkw5564b2" path="res://Icon/pink_tree.png" id="4_uypo1"]
-[ext_resource type="Texture2D" uid="uid://kg4ka88w8wsm" path="res://Icon/rabbit.png" id="5_uypo1"]
 
 [node name="Ui" type="Control"]
 custom_minimum_size = Vector2(50, 50)
@@ -15,6 +15,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.1, 0.16)
+script = ExtResource("1_n8sa8")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 visible = false
@@ -70,7 +71,7 @@ texture = ExtResource("3_xgyi3")
 expand_mode = 1
 stretch_mode = 4
 
-[node name="Slot2" parent="HBoxContainer" instance=ExtResource("1_vwav4")]
+[node name="Slot2" parent="HBoxContainer" groups=["key_pressed"] instance=ExtResource("1_vwav4")]
 layout_mode = 2
 script = null
 
@@ -92,21 +93,6 @@ stretch_mode = 4
 [node name="Slot3" parent="HBoxContainer" instance=ExtResource("1_vwav4")]
 layout_mode = 2
 script = null
-
-[node name="TextureRect" type="TextureRect" parent="HBoxContainer/Slot3"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.48
-anchor_top = 0.513
-anchor_right = 0.5
-anchor_bottom = 0.513
-offset_left = -14.0
-offset_top = -9.97599
-offset_right = 16.0
-offset_bottom = 18.024
-texture = ExtResource("5_uypo1")
-expand_mode = 1
-stretch_mode = 4
 
 [node name="Slot4" parent="HBoxContainer" instance=ExtResource("1_vwav4")]
 layout_mode = 2
@@ -140,3 +126,6 @@ custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+
+[connection signal="button_down" from="HBoxContainer/Slot" to="." method="house"]
+[connection signal="button_down" from="HBoxContainer/Slot2" to="." method="cherry_blossom"]

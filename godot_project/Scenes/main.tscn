@@ -230,10 +230,10 @@ material = SubResource("ShaderMaterial_ynf5e")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -182.0
-offset_top = -153.0
-offset_right = 424.0
-offset_bottom = 243.0
+offset_left = -145.0
+offset_top = -171.0
+offset_right = 461.0
+offset_bottom = 225.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("3_6iyac")
@@ -292,6 +292,7 @@ transform = Transform3D(0.0875031, 0, 0, 0, 0.0551519, 0, 0, 0, 0.0684555, -0.84
 script = ExtResource("4_kry3j")
 
 [node name="PanelContainer" type="PanelContainer" parent="SubViewportContainer/SubViewport/Reactahh"]
+visible = false
 offset_left = 378.0
 offset_top = 17.0
 offset_right = 468.0
@@ -346,37 +347,33 @@ shape = SubResource("ConvexPolygonShape3D_hptm8")
 [node name="game_state" type="Node3D" parent="SubViewportContainer/SubViewport"]
 script = ExtResource("11_d1ilt")
 
-[node name="PanelContainer" type="PanelContainer" parent="SubViewportContainer/SubViewport"]
-offset_left = 0.5
-offset_top = 228.0
-offset_right = 40.5
-offset_bottom = 268.0
-scale = Vector2(5.0385, 3.24702)
-
-[node name="Ui" parent="SubViewportContainer/SubViewport" instance=ExtResource("13_fdnlq")]
-offset_left = 49.5
-offset_top = 225.5
-offset_right = -476.5
-offset_bottom = -48.5
+[node name="Ui" parent="SubViewportContainer/SubViewport" groups=["key_pressed"] instance=ExtResource("13_fdnlq")]
+z_index = 5
+offset_left = -175.5
+offset_top = 18.5
+offset_right = -428.5
+offset_bottom = -139.5
 scale = Vector2(1.74177, 2.43204)
 
-[node name="TextureRect2" type="TextureRect" parent="SubViewportContainer/SubViewport/Ui"]
+[node name="TextureRect2" type="TextureRect" parent="SubViewportContainer/SubViewport"]
 top_level = true
-z_index = -1
+light_mask = 8
+visibility_layer = 4
+z_index = -2
 texture_filter = 1
-layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.489
 anchor_top = 0.671
 anchor_right = 0.489
 anchor_bottom = 0.671
-offset_left = -276.164
-offset_top = 71.096
-offset_right = 413.836
-offset_bottom = 179.096
+offset_left = -276.664
+offset_top = 19.596
+offset_right = 413.336
+offset_bottom = 127.596
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(0.399482, 0.208433)
+scale = Vector2(0.459482, 0.73899)
+mouse_filter = 2
 texture = ExtResource("14_jkdf5")
 expand_mode = 1
 stretch_mode = 4

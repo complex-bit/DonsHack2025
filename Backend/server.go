@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -12,7 +13,12 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	_ "github.com/mattn/go-sqlite3"
 )
+
+// Database connection
+var db *sql.DB
 
 // Global cache variables with API key as part of the key
 var (
@@ -22,7 +28,7 @@ var (
 	cacheExpiration = 15 * time.Minute // Cache expires after 15 minutes
 )
 
-// Session manager instance (defined in auth.go)
+// Session manager instance
 var sessionManager *SessionManager
 
 // ----- Entry and Assignment Data Structures -----
@@ -67,6 +73,158 @@ type Exit struct {
 	Assign_name string `json:"assign_name"`
 	Due_date    string `json:"due_date"`
 	Money       int    `json:"money"`
+}
+
+// ----- Canvas API Functions -----
+
+func getNextPageURL(linkHeader string) string {
+	links := strings.Split(linkHeader, ",")
+	for _, link := range links {
+		if strings.Contains(link, `rel="next"`) {
+			// Extract URL from the <...> part
+			start := strings.Index(link, "<") + 1
+			end := strings.Index(link, ">")
+			if start > 0 && end > start {
+				return link[start:end]
+			}
+		}
+	}
+	return ""
+}
+
+func getEntries(courseId string, course_name string, apiKey string) []Entry {
+	// Use the provided API key
+	canvasToken := apiKey
+	courseID := courseId
+	baseURL := "https://usfca.instructure.com"
+	var all_canvas_assign []CanvasAssignment
+	url := fmt.Sprintf("%s/api/v1/courses/%s/assignments?include[]=submission", baseURL, courseID)
+
+	for {
+		req, err := http.NewRequest("GET", url, nil)
+		if err != nil {
+			log.Printf("Error creating request: %v", err)
+			return nil
+		}
+		req.Header.Set("Authorization", "Bearer "+canvasToken)
+
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			log.Printf("Error sending request: %v", err)
+			return nil
+		}
+		defer resp.Body.Close()
+
+		// Check for unauthorized status
+		if resp.StatusCode == http.StatusUnauthorized {
+			log.Printf("Unauthorized access: Invalid API key")
+			return nil
+		}
+
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			log.Printf("Error reading response body: %v", err)
+			return nil
+		}
+
+		// Unmarshal the assignments from the response body
+		var assign_entry []CanvasAssignment
+		err = json.Unmarshal(body, &assign_entry)
+		if err != nil {
+			log.Printf("Error unmarshaling JSON: %v", err)
+			return nil
+		}
+
+		// Add the assignments to the allAssignments slice
+		all_canvas_assign = append(all_canvas_assign, assign_entry...)
+
+		// Check if there's another page of assignments
+		linkHeader := resp.Header.Get("Link")
+		if linkHeader == "" {
+			break // No more pages, exit the loop
+		}
+
+		// Parse the Link header to find the next page URL
+		nextPage := getNextPageURL(linkHeader)
+		if nextPage == "" {
+			break // No "next" page, exit the loop
+		}
+
+		// Set the URL for the next request
+		url = nextPage
+	}
+
+	n := len(all_canvas_assign)
+	entries := make([]Entry, n)
+	for i := 0; i < n; i++ {
+		entries[i] = Entry{
+			Course_name:    course_name,
+			Assign_name:    all_canvas_assign[i].Name,
+			Due_date:       all_canvas_assign[i].DueAt,
+			Submitted_date: "",
+			Is_submitted:   false,
+			Date_posted:    all_canvas_assign[i].CreatedAt,
+			Points:         int(all_canvas_assign[i].PointsPossible),
+			Submittable:    all_canvas_assign[i].Submittable,
+			Locked:         all_canvas_assign[i].Locked,
+		}
+		if all_canvas_assign[i].Submission != nil && all_canvas_assign[i].Submission.SubmittedAt != "" {
+			entries[i].Submitted_date = all_canvas_assign[i].Submission.SubmittedAt
+			entries[i].Is_submitted = true
+		}
+	}
+	return entries
+}
+
+type Course struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+func getCourseEntries(apiKey string) []Entry {
+	req, _ := http.NewRequest("GET", "https://usfca.instructure.com/api/v1/users/self/courses?include[]=enrollments&enrollment_state=active", nil)
+	req.Header.Set("Authorization", "Bearer "+apiKey)
+
+	// Send request
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Printf("Error fetching courses: %v", err)
+		return []Entry{}
+	}
+	defer resp.Body.Close()
+
+	// Check for unauthorized status
+	if resp.StatusCode == http.StatusUnauthorized {
+		log.Printf("Unauthorized access: Invalid API key")
+		return []Entry{}
+	}
+
+	// Read body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("Error reading response body: %v", err)
+		return []Entry{}
+	}
+
+	var courses []Course
+	err = json.Unmarshal(body, &courses)
+	if err != nil {
+		log.Printf("Error unmarshaling courses: %v", err)
+		return []Entry{}
+	}
+
+	n := len(courses)
+	var entries []Entry
+	for i := 0; i < n; i++ {
+		courseEntries := getEntries(fmt.Sprintf("%d", courses[i].ID), courses[i].Name, apiKey)
+		if courseEntries != nil {
+			entries = append(entries, courseEntries...)
+		}
+	}
+
+	return entries
 }
 
 // ----- Data Processing Functions -----
@@ -250,157 +408,40 @@ func assignments_to_exits(assignments []assignment) (exits []Exit) {
 	return exit_slice
 }
 
-// ----- Canvas API Functions -----
-
-func getNextPageURL(linkHeader string) string {
-	// Example Link header: <https://api.instructure.com/api/v1/courses/1/assignments?page=2>; rel="next"
-	links := strings.Split(linkHeader, ",")
-	for _, link := range links {
-		if strings.Contains(link, `rel="next"`) {
-			// Extract URL from the <...> part
-			start := strings.Index(link, "<") + 1
-			end := strings.Index(link, ">")
-			if start > 0 && end > start {
-				return link[start:end]
-			}
-		}
-	}
-	return ""
-}
-
-func getEntries(courseId string, course_name string, apiKey string) []Entry {
-	// Use the provided API key instead of getting from .env
-	canvasToken := apiKey
-	courseID := courseId
-	baseURL := "https://usfca.instructure.com"
-	var all_canvas_assign []CanvasAssignment
-	url := fmt.Sprintf("%s/api/v1/courses/%s/assignments?include[]=submission", baseURL, courseID)
-
-	for {
-		req, err := http.NewRequest("GET", url, nil)
-		if err != nil {
-			log.Printf("Error creating request: %v", err)
-			return nil
-		}
-		req.Header.Set("Authorization", "Bearer "+canvasToken)
-
-		client := &http.Client{}
-		resp, err := client.Do(req)
-		if err != nil {
-			log.Printf("Error sending request: %v", err)
-			return nil
-		}
-		defer resp.Body.Close()
-
-		// Check for unauthorized status
-		if resp.StatusCode == http.StatusUnauthorized {
-			log.Printf("Unauthorized access: Invalid API key")
-			return nil
-		}
-
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			log.Printf("Error reading response body: %v", err)
-			return nil
-		}
-
-		// Unmarshal the assignments from the response body
-		var assign_entry []CanvasAssignment
-		err = json.Unmarshal(body, &assign_entry)
-		if err != nil {
-			log.Printf("Error unmarshaling JSON: %v", err)
-			return nil
-		}
-
-		// Add the assignments to the allAssignments slice
-		all_canvas_assign = append(all_canvas_assign, assign_entry...)
-
-		// Check if there's another page of assignments
-		linkHeader := resp.Header.Get("Link")
-		if linkHeader == "" {
-			break // No more pages, exit the loop
-		}
-
-		// Parse the Link header to find the next page URL
-		nextPage := getNextPageURL(linkHeader)
-		if nextPage == "" {
-			break // No "next" page, exit the loop
-		}
-
-		// Set the URL for the next request
-		url = nextPage
-	}
-
-	n := len(all_canvas_assign)
-	entries := make([]Entry, n)
-	for i := 0; i < n; i++ {
-		entries[i] = Entry{
-			Course_name:    course_name,
-			Assign_name:    all_canvas_assign[i].Name,
-			Due_date:       all_canvas_assign[i].DueAt,
+// Get demo assignments for development or when API key is not available
+func getDemoAssignments() []Exit {
+	// Demo data for development
+	demoEntries := []Entry{
+		{
+			Course_name:    "Math 101",
+			Assign_name:    "Homework 1",
+			Due_date:       time.Now().Add(48 * time.Hour).Format(time.RFC3339),
 			Submitted_date: "",
 			Is_submitted:   false,
-			Date_posted:    all_canvas_assign[i].CreatedAt,
-			Points:         int(all_canvas_assign[i].PointsPossible),
-			Submittable:    all_canvas_assign[i].Submittable,
-			Locked:         all_canvas_assign[i].Locked,
-		}
-		if all_canvas_assign[i].Submission != nil && all_canvas_assign[i].Submission.SubmittedAt != "" {
-			entries[i].Submitted_date = all_canvas_assign[i].Submission.SubmittedAt
-			entries[i].Is_submitted = true
-		}
+			Date_posted:    time.Now().Add(-72 * time.Hour).Format(time.RFC3339),
+			Points:         100,
+		},
+		{
+			Course_name:    "Computer Science 202",
+			Assign_name:    "Programming Project",
+			Due_date:       time.Now().Add(24 * time.Hour).Format(time.RFC3339),
+			Submitted_date: "",
+			Is_submitted:   false,
+			Date_posted:    time.Now().Add(-96 * time.Hour).Format(time.RFC3339),
+			Points:         150,
+		},
+		{
+			Course_name:    "History 155",
+			Assign_name:    "Research Paper",
+			Due_date:       time.Now().Add(72 * time.Hour).Format(time.RFC3339),
+			Submitted_date: "",
+			Is_submitted:   false,
+			Date_posted:    time.Now().Add(-120 * time.Hour).Format(time.RFC3339),
+			Points:         75,
+		},
 	}
-	return entries
-}
-
-type Course struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-}
-
-func getCourseEntries(apiKey string) []Entry {
-	req, _ := http.NewRequest("GET", "https://usfca.instructure.com/api/v1/users/self/courses?include[]=enrollments&enrollment_state=active", nil)
-	req.Header.Set("Authorization", "Bearer "+apiKey)
-
-	// Send request
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Printf("Error fetching courses: %v", err)
-		return []Entry{}
-	}
-	defer resp.Body.Close()
-
-	// Check for unauthorized status
-	if resp.StatusCode == http.StatusUnauthorized {
-		log.Printf("Unauthorized access: Invalid API key")
-		return []Entry{}
-	}
-
-	// Read body
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Printf("Error reading response body: %v", err)
-		return []Entry{}
-	}
-
-	var courses []Course
-	err = json.Unmarshal(body, &courses)
-	if err != nil {
-		log.Printf("Error unmarshaling courses: %v", err)
-		return []Entry{}
-	}
-
-	n := len(courses)
-	var entries []Entry
-	for i := 0; i < n; i++ {
-		courseEntries := getEntries(fmt.Sprintf("%d", courses[i].ID), courses[i].Name, apiKey)
-		if courseEntries != nil {
-			entries = append(entries, courseEntries...)
-		}
-	}
-
-	return entries
+	assignments := entry_processor(demoEntries)
+	return assignments_to_exits(assignments)
 }
 
 func process_assignments(apiKey string) []Exit {
@@ -449,44 +490,6 @@ func process_assignments(apiKey string) []Exit {
 	return exits
 }
 
-// Get demo assignments for development or when API key is not available
-func getDemoAssignments() []Exit {
-	// Demo data for development
-	demoEntries := []Entry{
-		{
-			Course_name:    "Math 101",
-			Assign_name:    "Homework 1",
-			Due_date:       time.Now().Add(48 * time.Hour).Format(time.RFC3339),
-			Submitted_date: "",
-			Is_submitted:   false,
-			Date_posted:    time.Now().Add(-72 * time.Hour).Format(time.RFC3339),
-			Points:         100,
-		},
-		{
-			Course_name:    "Computer Science 202",
-			Assign_name:    "Programming Project",
-			Due_date:       time.Now().Add(24 * time.Hour).Format(time.RFC3339),
-			Submitted_date: "",
-			Is_submitted:   false,
-			Date_posted:    time.Now().Add(-96 * time.Hour).Format(time.RFC3339),
-			Points:         150,
-		},
-		{
-			Course_name:    "History 155",
-			Assign_name:    "Research Paper",
-			Due_date:       time.Now().Add(72 * time.Hour).Format(time.RFC3339),
-			Submitted_date: "",
-			Is_submitted:   false,
-			Date_posted:    time.Now().Add(-120 * time.Hour).Format(time.RFC3339),
-			Points:         75,
-		},
-	}
-	assignments := entry_processor(demoEntries)
-	return assignments_to_exits(assignments)
-}
-
-// ----- HTTP Server Functions -----
-
 // CORS middleware to handle preflight requests
 func enableCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -504,53 +507,41 @@ func enableCORS(next http.Handler) http.Handler {
 	})
 }
 
-// Check if a user is logged in
-func isLoggedIn(r *http.Request) bool {
-	cookie, err := r.Cookie("session_id")
-	if err != nil {
-		return false
-	}
-
-	session := sessionManager.GetSession(cookie.Value)
-	return session != nil
-}
-
-// Get user info if logged in
-func getLoggedInUser(r *http.Request) *UserSession {
-	cookie, err := r.Cookie("session_id")
-	if err != nil {
-		return nil
-	}
-
-	return sessionManager.GetSession(cookie.Value)
-}
-
 func main() {
-	// Initialize session manager
-	sessionManager = NewSessionManager()
+	// Initialize database
+	var err error
+	db, err = initDB()
+	if err != nil {
+		log.Fatalf("Failed to initialize database: %v", err)
+	}
+	defer db.Close()
+
+	// Initialize session manager with the database connection
+	sessionManager = NewSessionManager(db)
 
 	// Initialize cache maps
 	assignmentCache = make(map[string][]Exit)
 	lastCacheUpdate = make(map[string]time.Time)
 
-	// API endpoints that require authentication
+	// API endpoints
 	http.HandleFunc("/assignments", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 
-		// Get API key from session
-		apiKey := sessionManager.ApiKeyFromRequest(r)
-
-		// Check if user is logged in
-		if !isLoggedIn(r) {
-			// For development, still return demo data
-			// In production, you might want to return an error instead
-			exits := getDemoAssignments()
-			json.NewEncoder(w).Encode(exits)
+		// Get user from session
+		user, err := sessionManager.GetLoggedInUser(r)
+		if err != nil {
+			log.Printf("Error getting logged in user: %v", err)
+			http.Error(w, "Server error", http.StatusInternalServerError)
 			return
 		}
 
-		// Process assignments with the user's API key
+		var apiKey string
+		if user != nil {
+			apiKey = user.APIKey
+		}
+
+		// Get assignments
 		exits := process_assignments(apiKey)
 
 		if err := json.NewEncoder(w).Encode(exits); err != nil {
@@ -559,29 +550,90 @@ func main() {
 		}
 	})
 
-	// Test data endpoint with increment functionality
-	var testValue = 100
+	// Data endpoint with money saving functionality
 	http.HandleFunc("/data", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Content-Type", "application/json")
 
+		// Get user from session
+		user, err := sessionManager.GetLoggedInUser(r)
+		if err != nil {
+			log.Printf("Error getting logged in user: %v", err)
+			http.Error(w, "Server error", http.StatusInternalServerError)
+			return
+		}
+
+		// If not logged in, return demo data
+		if user == nil {
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"test": 100, // Default value for non-logged in users
+			})
+			return
+		}
+
+		// For POST requests, increment money
 		if r.Method == "POST" {
-			// Handle POST request to increment value
-			testValue += 5
+			// Increment user's money
+			err = sessionManager.UpdateUserMoney(user.ID, 5) // Add 5 money for each task completed
+			if err != nil {
+				log.Printf("Error updating user money: %v", err)
+				http.Error(w, "Error updating money", http.StatusInternalServerError)
+				return
+			}
+
+			// Get updated money
+			user, err = sessionManager.GetLoggedInUser(r)
+			if err != nil {
+				log.Printf("Error getting updated user: %v", err)
+				http.Error(w, "Server error", http.StatusInternalServerError)
+				return
+			}
 		}
 
-		data := map[string]interface{}{
-			"test": testValue,
+		// Return current money
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"test": user.Money,
+		})
+	})
+
+	// User money endpoint
+	http.HandleFunc("/api/money", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		// Get user from session
+		user, err := sessionManager.GetLoggedInUser(r)
+		if err != nil {
+			log.Printf("Error getting logged in user: %v", err)
+			http.Error(w, "Server error", http.StatusInternalServerError)
+			return
 		}
 
-		json.NewEncoder(w).Encode(data)
+		// If not logged in, return error
+		if user == nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"error": "Not logged in",
+			})
+			return
+		}
+
+		// Return user's money
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"money": user.Money,
+		})
 	})
 
 	// Session status endpoint
 	http.HandleFunc("/api/session", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		user := getLoggedInUser(r)
+		user, err := sessionManager.GetLoggedInUser(r)
+		if err != nil {
+			log.Printf("Error checking session: %v", err)
+			http.Error(w, "Server error", http.StatusInternalServerError)
+			return
+		}
+
 		if user == nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			json.NewEncoder(w).Encode(map[string]interface{}{
@@ -594,7 +646,7 @@ func main() {
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"loggedIn": true,
 			"username": user.Username,
-			"since":    user.CreatedAt,
+			"money":    user.Money,
 		})
 	})
 
@@ -605,15 +657,15 @@ func main() {
 	// Static file paths
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("../static"))))
 
-	// Handle the main page - with authentication check fully implemented
+	// Handle the main page - with authentication check
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
 			http.NotFound(w, r)
 			return
 		}
 
-		// Check if user is logged in - now properly implemented
-		if !isLoggedIn(r) {
+		// Check if user is logged in
+		if !sessionManager.IsLoggedIn(r) {
 			log.Printf("User not logged in, redirecting to login page")
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
